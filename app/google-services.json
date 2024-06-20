@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "84659532892",
+    "project_id": "cafesist-3dc22",
+    "storage_bucket": "cafesist-3dc22.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:84659532892:android:73bccae71abe6a4ed82299",
+        "android_client_info": {
+          "package_name": "com.aslansoft.caffesist"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBw8H8VArzmnDiBAiOOgZDJ43AAgLZkl9s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
