@@ -20,9 +20,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -57,6 +59,7 @@ import com.aslansoft.caffesist.R
 import com.aslansoft.caffesist.ui.theme.Purple80
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
+import com.google.type.Date
 
 data class Products(
     val name: String,
@@ -68,7 +71,7 @@ data class Products(
 @Composable
 fun Menu(navController: NavHostController,documentId: String) {
     val db = Firebase.firestore
-    val productsList = remember {
+    val productsList = remember{
         mutableStateListOf<Products>()
     }
     val selectedProducts = remember {
@@ -95,6 +98,9 @@ fun Menu(navController: NavHostController,documentId: String) {
         derivedStateOf {
             selectedProducts.entries.sumOf { it.key.price * it.value }
         }
+    }
+    val alertState = remember {
+        mutableStateOf(false)
     }
     val context = LocalContext.current
 
@@ -230,11 +236,7 @@ fun Menu(navController: NavHostController,documentId: String) {
                     Text(modifier = Modifier.padding(start = 2.dp),text = "Toplam Fiyat: ${totalPrice}₺")
                 }, floatingActionButton = {
                     FloatingActionButton(onClick = {
-                        if (totalPrice != 0L){
-                            navController.navigate("basket_screen/$totalPrice")
-                        }else{
-                            Toast.makeText(context,"Lütfen Ürün Seçiniz",Toast.LENGTH_SHORT).show()
-                        }
+                        alertState.value = true
                     }, containerColor = Purple80,
                         ) {
                         Icon(imageVector = ImageVector.vectorResource(id = R.drawable.shopping_basket), contentDescription = null )
@@ -242,6 +244,49 @@ fun Menu(navController: NavHostController,documentId: String) {
                 })
             }
         }
+        
+        if (alertState.value){
+            AlertDialog(title = {
+                Text(text = "Afiyet Olsun")
+            },text = {
+                Text(text = "Ödemeyi onaylamak istiyor musunuz?")
+            }, dismissButton = {
+                ElevatedButton(onClick = { alertState.value = false}) {
+                    Text(text = "Hayır")
+                }
+            },onDismissRequest = { alertState.value = false }, confirmButton = {
+                ElevatedButton(onClick = { if (totalPrice != 0L){
+                    val orders = selectedProducts.map { (name,quantity) ->
+
+                        mapOf(
+                            "product" to name,
+                            "quantity" to quantity,
+
+                            )
+                    }
+                    val orderData = hashMapOf(
+                        "products" to  orders,
+                        "totalPrice" to totalPrice,
+                        "table" to documentId,
+                        "date" to com.google.firebase.Timestamp.now(),
+                        "confirm" to false,
+                        "payTo" to false
+                    )
+                    db.collection("orders").add(orderData).addOnSuccessListener {
+                        print("succes")
+                        alertState.value = false
+                        navController.navigate("basket_screen/$totalPrice")
+
+                    }
+                }else{
+                    Toast.makeText(context,"Lütfen Ürün Seçiniz",Toast.LENGTH_SHORT).show()
+                    alertState.value = false
+                } }) {
+                    Text(text = "Onayla")
+                }
+            })
+        }
+        
     }
     BackHandler(true) {
         navController.popBackStack()
