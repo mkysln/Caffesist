@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
@@ -237,8 +238,7 @@ fun Menu(navController: NavHostController,documentId: String) {
                 }, floatingActionButton = {
                     FloatingActionButton(onClick = {
                         alertState.value = true
-                    }, containerColor = Purple80,
-                        ) {
+                    }, containerColor = Color(50,0,0)) {
                         Icon(imageVector = ImageVector.vectorResource(id = R.drawable.shopping_basket), contentDescription = null )
                     }
                 })
@@ -248,10 +248,19 @@ fun Menu(navController: NavHostController,documentId: String) {
         if (alertState.value){
             AlertDialog(title = {
                 Text(text = "Afiyet Olsun")
-            },text = {
+            },
+                containerColor = MaterialTheme.colorScheme.background,
+                titleContentColor = Color.White,
+                textContentColor = Color.White,
+                iconContentColor = Color.White,
+                text = {
                 Text(text = "Ödemeyi onaylamak istiyor musunuz?")
             }, dismissButton = {
-                ElevatedButton(onClick = { alertState.value = false}) {
+                ElevatedButton(onClick = { alertState.value = false},
+                    colors = ButtonDefaults.elevatedButtonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = Color.White
+                    ) ) {
                     Text(text = "Hayır")
                 }
             },onDismissRequest = { alertState.value = false }, confirmButton = {
@@ -281,7 +290,11 @@ fun Menu(navController: NavHostController,documentId: String) {
                 }else{
                     Toast.makeText(context,"Lütfen Ürün Seçiniz",Toast.LENGTH_SHORT).show()
                     alertState.value = false
-                } }) {
+                } },
+                    colors = ButtonDefaults.elevatedButtonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = Color.White
+                    )) {
                     Text(text = "Onayla")
                 }
             })

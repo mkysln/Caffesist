@@ -10,8 +10,10 @@ import androidx.navigation.compose.rememberNavController
 import com.aslansoft.caffesist.ui.theme.CaffesistTheme
 import com.aslansoft.caffesist.views.BasketScreen
 import com.aslansoft.caffesist.views.Camera
+import com.aslansoft.caffesist.views.Login
 import com.aslansoft.caffesist.views.MainScreen
 import com.aslansoft.caffesist.views.Menu
+import com.aslansoft.caffesist.views.RegisterScreen
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.FirebaseApp
 
@@ -29,7 +31,13 @@ class MainActivity : ComponentActivity() {
                 systemUIcontroller.setNavigationBarColor(color = MaterialTheme.colorScheme.background)
                 val navController = rememberNavController()
 
-                NavHost(navController = navController, startDestination = "main_screen"){
+                NavHost(navController = navController, startDestination = "login_screen"){
+                    composable("login_screen"){
+                        Login(navController = navController)
+                    }
+                    composable("register_screen"){
+                        RegisterScreen(navController = navController)
+                    }
                     composable("main_screen"){
                         MainScreen(navController = navController)
                     }

@@ -52,6 +52,7 @@ android {
 
 dependencies {
 
+    val accompanVer = "0.35.1-alpha"
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -113,7 +114,14 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.6.0")
     //RememberSystemUiController
     //noinspection UseTomlInstead
-    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.35.1-alpha")
+    implementation ("com.google.accompanist:accompanist-systemuicontroller:$accompanVer")
+    //firebase auth
+    implementation("com.google.firebase:firebase-auth")
+    //Pager
+    implementation ("com.google.accompanist:accompanist-pager:0.19.0")
+
+    // If using indicators, also depend on
+    implementation ("com.google.accompanist:accompanist-pager-indicators:0.19.0")
 
 
 
