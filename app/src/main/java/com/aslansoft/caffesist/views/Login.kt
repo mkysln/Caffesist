@@ -1,6 +1,7 @@
 package com.aslansoft.caffesist.views
 
 import android.app.Activity
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -54,6 +55,7 @@ fun Login(navController: NavHostController) {
     val password = remember {
         mutableStateOf("")
     }
+    val context = LocalContext.current
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
             Image(modifier = Modifier.size(150.dp),bitmap = ImageBitmap.imageResource(id = R.drawable.caffesist_logo_bg), contentDescription = "")
@@ -91,7 +93,27 @@ fun Login(navController: NavHostController) {
                 )
             )
             Spacer(modifier = Modifier.padding(vertical = 10.dp))
-            ElevatedButton(onClick = { navController.navigate("main_screen")},
+            ElevatedButton(onClick = {
+                if (email.value.isNotEmpty() && password.value.isNotEmpty()){
+                    if (email.value.endsWith(".com") && email.value.contains("@")){
+                        if (password.value.length >= 6){
+
+                        }else{
+                            Toast.makeText(context,"Parolanız Hatalı",Toast.LENGTH_SHORT).show()
+                        }
+                    }else{
+                        Toast.makeText(context,"Lütfen E-Posta Adresinizi Doğru Biçimde Yazınız",Toast.LENGTH_SHORT).show()
+                    }
+                }else{
+                    Toast.makeText(context,"Tüm Alanları Doldurunuz", Toast.LENGTH_SHORT).show()
+                }
+
+
+
+
+
+
+            /*navController.navigate("main_screen")*/},
                 colors = ButtonDefaults.elevatedButtonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = Color.White

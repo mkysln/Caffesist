@@ -1,5 +1,8 @@
+@file:Suppress("DEPRECATION")
+
 package com.aslansoft.caffesist.views
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -190,11 +193,73 @@ fun RegisterScreen(navController: NavHostController) {
             }
             Spacer(modifier = Modifier.padding(vertical = 5.dp))
             ElevatedButton(onClick = {
+                val currentDate = Calendar.getInstance()
+                val birthDate = Calendar.getInstance().apply {
+                    val parts = userBirthDate.value.split(".")
+                    set(parts[2].toInt(), parts[1].toInt() - 1, parts[0].toInt())
+                }
+                var age = currentDate.get(Calendar.YEAR) - birthDate.get(Calendar.YEAR)
+                if (currentDate.get(Calendar.DAY_OF_YEAR) < birthDate.get(Calendar.DAY_OF_YEAR)) {
+                    age--
+                }
                 if(userName.value.isNotEmpty() && userSurname.value.isNotEmpty() && userEmail.value.isNotEmpty() && userPhone.value.isNotEmpty() && userPassword.value.isNotEmpty() && userBirthDate.value.isNotEmpty()){
                     if (userEmail.value.endsWith(".com")&&userEmail.value.contains("@")){
-                        Toast.makeText(context,"Başarılı",Toast.LENGTH_SHORT).show()
+                        if (userPhone.value.startsWith("0")){
+                            if (userPassword.value.length >= 6){
+                                if (age>= 18){
+                                    val data = hashMapOf(
+                                        "name" to userName.value,
+                                        "surname" to userSurname.value,
+                                        "email" to userEmail.value,
+                                        "phone" to userPhone.value,
+                                        "birthDate" to userBirthDate.value
+                                    )
+                                    auth.fetchSignInMethodsForEmail(userEmail.value).addOnCompleteListener{ task ->
+                                        if (task.isSuccessful){
+                                            auth.createUserWithEmailAndPassword(userEmail.value,userPassword.value).addOnCompleteListener{createUser ->
+                                                if (createUser.isSuccessful){
+                                                    val currentUser = auth.currentUser
+                                                    currentUser?.sendEmailVerification()?.addOnCompleteListener { verified ->
+                                                        if (verified.isSuccessful){
+                                                            Toast.makeText(context,"Kaydınızı Tamamlamak İçin Lütfen E-Postanızı Doğrulayınız",Toast.LENGTH_LONG).show()
+                                                            db.collection("users").document(userEmail.value).set(data).addOnSuccessListener {
+                                                                println("person data succes database writing")
+                                                            }
+                                                            navController.navigate("login_screen")
+                                                        }else{
+                                                            Toast.makeText(context,"E-Posta Gönderilirken Bir Hata Oluştu",Toast.LENGTH_SHORT).show()
+                                                            println("sendEmailVerification:failure" + verified.exception)
+                                                        }
+                                                    }
+                                                }
+                                                else {
+                                                    // If sign in fails, display a message to the user.
+                                                    Log.w("ErrorAuth", "signInWithEmail:failure", task.exception)
+                                                    Toast.makeText(
+                                                        context,
+                                                        task.exception.toString(),
+                                                        Toast.LENGTH_SHORT,
+                                                    ).show()
+
+                                                }
+
+                                            }
+                                        }
+
+                                    }
+
+                                }else{
+                                    Toast.makeText(context,"Kullanıcı 18 Yaşın Altında Olamaz",Toast.LENGTH_SHORT).show()
+                                }
+                            }else{
+                                Toast.makeText(context,"Parola En Az 6 Karakterden Oluşmalıdır",Toast.LENGTH_SHORT).show()
+                            }
+
+                        }else{
+                            Toast.makeText(context,"Lütfen Telefon Numaranızı Doğru Biçimde Yazınız", Toast.LENGTH_SHORT).show()
+                        }
                     }else{
-                        Toast.makeText(context,"Lütfen E-Postanızı Doğru Şekilde Yazınız",Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context,"Lütfen E-Postanızı Doğru Biçimde Yazınız",Toast.LENGTH_SHORT).show()
                     }
                 }
                 else{
