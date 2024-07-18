@@ -22,6 +22,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,6 +40,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -48,13 +54,15 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import com.aslansoft.caffesist.R
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
 @Composable
 fun MainScreen(navController: NavHostController) {
     val context = LocalContext.current
-
+    val auth = Firebase.auth
     val cameraGranted = remember {
         mutableStateOf(
             ContextCompat.checkSelfPermission(
@@ -138,8 +146,8 @@ fun MainScreen(navController: NavHostController) {
                         contentColor = Color.White
                     ), onClick = {/*TODO*/}){
                         Row(modifier = Modifier.fillMaxSize(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-                            Icon(imageVector = ImageVector.vectorResource(id = R.drawable.campaign_24px), contentDescription = null)
-                            Text(text = "Kampanyalar")
+                            Icon(imageVector = Icons.Outlined.Settings, contentDescription = null)
+                            Text(text = "Ayarlar")
                         }
 
                     }
@@ -152,6 +160,7 @@ fun MainScreen(navController: NavHostController) {
                         contentColor = Color.White
                     )){
                         Row (modifier = Modifier.fillMaxSize(),horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically){
+                            Icon(imageVector = Icons.Outlined.Info, contentDescription = null)
                             Text(text = "Geri Bildirim")
                         }
                     }
@@ -161,8 +170,10 @@ fun MainScreen(navController: NavHostController) {
                         .size(50.dp)
                         .padding(top = 3.dp, end = 3.dp), colors = CardDefaults.elevatedCardColors(
                         containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = Color.White
-                    )){
+                        contentColor = Color.White,
+                    ),
+                        onClick = {auth.signOut()
+                        navController.navigate("login_screen")}){
                         Row (modifier = Modifier.fillMaxSize(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically){
                             Icon(imageVector = ImageVector.vectorResource(id = R.drawable.logout_24px), contentDescription = "")
                             Text(text = "Çıkış Yap")    
@@ -174,11 +185,10 @@ fun MainScreen(navController: NavHostController) {
 
             }
             val samplePhotos = listOf(
-                R.drawable.qr_code_24px,
-                R.drawable.caffesist_logo,
-                R.drawable.caffesist_logo_bg,
-                R.drawable.ic_launcher_background,
-                R.drawable.ic_launcher_foreground
+                R.drawable.sayfa_1,
+                R.drawable.sayfa_2,
+                R.drawable.sayfa_3,
+                R.drawable.sayfa_4,
             )
             val pagerState = com.google.accompanist.pager.rememberPagerState()
 
@@ -204,7 +214,16 @@ fun MainScreen(navController: NavHostController) {
                     contentColor = Color.White,
                     containerColor = MaterialTheme.colorScheme.primary
                 )) {
-                Text(text = "Yaklaşan Etkinlikler")
+                Column(modifier = Modifier.fillMaxSize()) {
+                    Row(modifier = Modifier.padding(top = 3.dp, start = 3.dp).fillMaxWidth().height(50.dp)) {
+                        Text(text = "Yaklaşan Etkinlikler")
+                    }
+                    Column(modifier = Modifier.fillMaxSize(),verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally){
+                        Text(text = "Yaklaşan Etkinlik Bulunmamakta", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                    }
+                }
+
+
             }
 
         }
@@ -230,7 +249,11 @@ fun PhotoMenu(photoList: List<Int>,pagerState: com.google.accompanist.pager.Page
             pagerState.animateScrollToPage(currentPage.value)
         }
     }
-    com.google.accompanist.pager.HorizontalPager(modifier = Modifier.fillMaxSize(),state = pagerState,count = photoList.size) { photo ->
-        Image(painter = painterResource(id = photoList[photo]), contentDescription ="" )
+    com.google.accompanist.pager.HorizontalPager(modifier = Modifier
+        .fillMaxSize()
+        .clip(shape = RoundedCornerShape(30.dp)),state = pagerState,count = photoList.size) { photo ->
+        Image(modifier = Modifier
+            .fillMaxSize()
+            .padding(start = 2.dp, end = 2.dp),painter = painterResource(id = photoList[photo]), contentDescription ="" )
     }
 }

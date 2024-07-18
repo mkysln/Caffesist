@@ -1,5 +1,3 @@
-@file:Suppress("NAME_SHADOWING")
-
 package com.aslansoft.caffesist.views
 
 import android.annotation.SuppressLint
@@ -43,7 +41,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,10 +54,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.aslansoft.caffesist.R
-import com.aslansoft.caffesist.ui.theme.Purple80
 import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
-import com.google.type.Date
 
 data class Products(
     val name: String,
@@ -104,30 +100,47 @@ fun Menu(navController: NavHostController,documentId: String) {
         mutableStateOf(false)
     }
     val context = LocalContext.current
-
+    val userName = remember {
+        mutableStateOf("")
+    }
+    val userSurname = remember {
+        mutableStateOf("")
+    }
+    val auth = Firebase.auth
+    val currentUser = auth.currentUser
+    val email = currentUser?.email
     LaunchedEffect(Unit) {
         try {
-            db.collection("Products").get().addOnSuccessListener { documents ->
-                for (document in documents){
-                    val productData: Map<String,Any> = document.data
-                    name.value = productData["name"].toString()
-                    photo.value = productData["photo"].toString()
-                    price.longValue = productData["price"] as Long
-                    type.value = productData["type"].toString()
-                    productsList.add(Products(name.value,photo.value,price.longValue,type.value))
+            email?.let {
+                db.collection("users").document(it).get().addOnSuccessListener {
+                    val data = it.data
+                    userName.value = data?.get("name").toString()
+                    userSurname.value = data?.get("surname").toString()
+                    db.collection("Products").get().addOnSuccessListener { documents ->
+                        for (document in documents){
+                            val productData: Map<String,Any> = document.data
+                            name.value = productData["name"].toString()
+                            photo.value = productData["photo"].toString()
+                            price.longValue = productData["price"] as Long
+                            type.value = productData["type"].toString()
+                            productsList.add(Products(name.value,photo.value,price.longValue,type.value))
+                        }
+                        isLoading.value = false
+                    }.addOnFailureListener{exc ->
+                        println(exc.localizedMessage)
+                        productsList.toList()
+                        isLoading.value = true
+                    }
+                }.addOnFailureListener{exception ->
+                    println(exception.message)
                 }
-                isLoading.value = false
-            }.addOnFailureListener{exc ->
-                println(exc.localizedMessage)
-                productsList.toList()
-                isLoading.value = true
             }
+
         }catch (e: Exception){
             println(e.localizedMessage)
         }
 
     }
-
 
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column(modifier = Modifier
@@ -231,6 +244,7 @@ fun Menu(navController: NavHostController,documentId: String) {
 
                 , horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.Bottom){
                 println("TotalPrice: $totalPrice")
+                println("Surname: ${userSurname.value}")
                 BottomAppBar(modifier = Modifier
                     .padding(start = 3.dp, end = 3.dp)
                     .clip(RoundedCornerShape(3.dp)),containerColor = MaterialTheme.colorScheme.primary,actions = {
@@ -279,7 +293,9 @@ fun Menu(navController: NavHostController,documentId: String) {
                         "table" to documentId,
                         "date" to com.google.firebase.Timestamp.now(),
                         "confirm" to false,
-                        "payTo" to false
+                        "payTo" to false,
+                         "name" to userName.value,
+                        "surname" to userSurname.value
                     )
                     db.collection("orders").add(orderData).addOnSuccessListener {
                         print("succes")

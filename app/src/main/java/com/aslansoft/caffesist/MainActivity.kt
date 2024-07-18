@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -15,7 +17,9 @@ import com.aslansoft.caffesist.views.MainScreen
 import com.aslansoft.caffesist.views.Menu
 import com.aslansoft.caffesist.views.RegisterScreen
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.google.firebase.Firebase
 import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.auth
 
 @Suppress("DEPRECATION")
 class MainActivity : ComponentActivity() {
@@ -26,12 +30,20 @@ class MainActivity : ComponentActivity() {
         setContent {
 
             CaffesistTheme {
+                val startDestination = remember {
+                    mutableStateOf("")
+                }
                 val systemUIcontroller = rememberSystemUiController()
                 systemUIcontroller.setStatusBarColor(color = MaterialTheme.colorScheme.background)
                 systemUIcontroller.setNavigationBarColor(color = MaterialTheme.colorScheme.background)
                 val navController = rememberNavController()
-
-                NavHost(navController = navController, startDestination = "login_screen"){
+                val auth = Firebase.auth
+                if (auth.currentUser != null){
+                    startDestination.value = "main_screen"
+                }else{
+                    startDestination.value = "login_screen"
+                }
+                NavHost(navController = navController, startDestination = startDestination.value){
                     composable("login_screen"){
                         Login(navController = navController)
                     }

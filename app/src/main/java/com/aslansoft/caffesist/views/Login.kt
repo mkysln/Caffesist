@@ -97,7 +97,11 @@ fun Login(navController: NavHostController) {
                 if (email.value.isNotEmpty() && password.value.isNotEmpty()){
                     if (email.value.endsWith(".com") && email.value.contains("@")){
                         if (password.value.length >= 6){
-
+                            auth.signInWithEmailAndPassword(email.value,password.value).addOnSuccessListener {
+                                navController.navigate("main_screen")
+                            }.addOnFailureListener(){
+                                Toast.makeText(context,it.message,Toast.LENGTH_SHORT).show()
+                            }
                         }else{
                             Toast.makeText(context,"Parolanız Hatalı",Toast.LENGTH_SHORT).show()
                         }
