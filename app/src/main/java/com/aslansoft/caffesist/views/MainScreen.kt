@@ -25,6 +25,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.CardDefaults
@@ -158,10 +159,11 @@ fun MainScreen(navController: NavHostController) {
                         .padding(top = 3.dp, end = 3.dp), colors = CardDefaults.elevatedCardColors(
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = Color.White
-                    )){
+                    ),
+                        onClick = {navController.navigate("history")}){
                         Row (modifier = Modifier.fillMaxSize(),horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically){
-                            Icon(imageVector = Icons.Outlined.Info, contentDescription = null)
-                            Text(text = "Geri Bildirim")
+                            Icon(imageVector = Icons.Outlined.DateRange, contentDescription = null)
+                            Text(text = "Geçmiş")
                         }
                     }
                     Spacer(modifier = Modifier.padding(vertical = 10.dp))

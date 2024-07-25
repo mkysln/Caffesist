@@ -57,6 +57,9 @@ import com.aslansoft.caffesist.R
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
+import java.sql.Date
+import java.sql.Time
+import java.sql.Timestamp
 
 data class Products(
     val name: String,
@@ -109,6 +112,7 @@ fun Menu(navController: NavHostController,documentId: String) {
     val auth = Firebase.auth
     val currentUser = auth.currentUser
     val email = currentUser?.email
+    val uid = currentUser?.uid
     LaunchedEffect(Unit) {
         try {
             email?.let {
@@ -287,15 +291,17 @@ fun Menu(navController: NavHostController,documentId: String) {
 
                             )
                     }
+                    val date = java.util.Date()
                     val orderData = hashMapOf(
                         "products" to  orders,
                         "totalPrice" to totalPrice,
                         "table" to documentId,
-                        "date" to com.google.firebase.Timestamp.now(),
-                        "confirm" to false,
+                        "date" to date,
+                        "confirm" to "onaylanmadı",
                         "payTo" to false,
                          "name" to userName.value,
-                        "surname" to userSurname.value
+                        "surname" to userSurname.value,
+                        "userId" to uid
                     )
                     db.collection("orders").add(orderData).addOnSuccessListener {
                         print("succes")

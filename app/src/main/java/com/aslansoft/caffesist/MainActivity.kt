@@ -12,9 +12,11 @@ import androidx.navigation.compose.rememberNavController
 import com.aslansoft.caffesist.ui.theme.CaffesistTheme
 import com.aslansoft.caffesist.views.BasketScreen
 import com.aslansoft.caffesist.views.Camera
+import com.aslansoft.caffesist.views.History
 import com.aslansoft.caffesist.views.Login
 import com.aslansoft.caffesist.views.MainScreen
 import com.aslansoft.caffesist.views.Menu
+import com.aslansoft.caffesist.views.NoInternetScreen
 import com.aslansoft.caffesist.views.RegisterScreen
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.Firebase
@@ -38,11 +40,17 @@ class MainActivity : ComponentActivity() {
                 systemUIcontroller.setNavigationBarColor(color = MaterialTheme.colorScheme.background)
                 val navController = rememberNavController()
                 val auth = Firebase.auth
-                if (auth.currentUser != null){
-                    startDestination.value = "main_screen"
-                }else{
-                    startDestination.value = "login_screen"
+                val internetState = remember {
+                    mutableStateOf(false)
                 }
+
+                    if (auth.currentUser != null){
+                        startDestination.value = "main_screen"
+                    }else{
+                        startDestination.value = "login_screen"
+                    }
+
+
                 NavHost(navController = navController, startDestination = startDestination.value){
                     composable("login_screen"){
                         Login(navController = navController)
@@ -64,6 +72,12 @@ class MainActivity : ComponentActivity() {
                         backStackEntry.arguments?.getString("totalPrice")
                             .let { BasketScreen(navController = navController, totalPrice = it) }
 
+                    }
+                    composable("no_internet"){
+                        NoInternetScreen(navController = navController)
+                    }
+                    composable("history"){
+                        History(navController = navController)
                     }
                 }
 
