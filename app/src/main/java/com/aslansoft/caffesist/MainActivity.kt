@@ -6,9 +6,11 @@ import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.aslansoft.caffesist.ui.theme.CaffesistTheme
 import com.aslansoft.caffesist.views.BasketScreen
 import com.aslansoft.caffesist.views.Camera
@@ -68,10 +70,13 @@ class MainActivity : ComponentActivity() {
                         backStackEntry.arguments?.getString("documentId")
                             ?.let { Menu(navController = navController, documentId = it) }
                     }
-                    composable("basket_screen/{totalPrice}"){backStackEntry ->
-                        backStackEntry.arguments?.getString("totalPrice")
-                            .let { BasketScreen(navController = navController, totalPrice = it) }
-
+                    composable("basket_screen/{totalPrice}/{orderId}", arguments = listOf(
+                        navArgument("totalPrice"){type = NavType.StringType},
+                        navArgument("orderId"){type = NavType.StringType},
+                    )){backStackEntry ->
+                        val totalPrice = backStackEntry.arguments?.getString("totalPrice")
+                        val orderId = backStackEntry.arguments?.getString("orderId")
+                        BasketScreen(navController = navController, totalPrice = totalPrice,orderId = orderId)
                     }
                     composable("no_internet"){
                         NoInternetScreen(navController = navController)

@@ -1,5 +1,7 @@
 package com.aslansoft.caffesist.views
 
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -7,6 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -17,11 +20,12 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 
 @Composable
-fun BasketScreen(navController: NavHostController, totalPrice: String?) {
+fun BasketScreen(navController: NavHostController, totalPrice: String?, orderId: String?) {
     val db = Firebase.firestore
     var cardNo by remember { mutableStateOf("") }
     var cardExp by remember { mutableStateOf(TextFieldValue()) }
     var cvv by remember { mutableStateOf("") }
+    val context = LocalContext.current
     Surface(modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background) {
         Column(modifier = Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
@@ -68,7 +72,14 @@ fun BasketScreen(navController: NavHostController, totalPrice: String?) {
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
             }
             Spacer(Modifier.padding(vertical = 10.dp))
-            ElevatedButton(onClick = {}, colors = ButtonDefaults.elevatedButtonColors(
+            ElevatedButton(onClick = {
+                db.collection("orders").document(orderId!!).update("payTo",true).addOnSuccessListener {
+                    Toast.makeText(context,"Ödeme Başarılı",Toast.LENGTH_LONG).show()
+                    navController.popBackStack()
+                }.addOnFailureListener {e ->
+                    Log.e("PayTo","Ödeme Hatası!!",e)
+                }
+            }, colors = ButtonDefaults.elevatedButtonColors(
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.surface,
             )) {

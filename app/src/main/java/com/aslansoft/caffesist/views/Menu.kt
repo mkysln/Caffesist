@@ -74,6 +74,7 @@ data class Products(
 @Composable
 fun Menu(navController: NavHostController,documentId: String) {
     val db = Firebase.firestore
+
     val productsList = remember{
         mutableStateListOf<Products>()
     }
@@ -112,6 +113,7 @@ fun Menu(navController: NavHostController,documentId: String) {
     val userSurname = remember {
         mutableStateOf("")
     }
+    val orderId = remember { mutableStateOf("") }
     val auth = Firebase.auth
     val currentUser = auth.currentUser
     val email = currentUser?.email
@@ -298,7 +300,7 @@ fun Menu(navController: NavHostController,documentId: String) {
 
                             )
                     }
-                    val date = java.util.Date()
+                    val date = com.google.firebase.Timestamp.now()
                     val orderData = hashMapOf(
                         "products" to  orders,
                         "totalPrice" to totalPrice,
@@ -311,9 +313,14 @@ fun Menu(navController: NavHostController,documentId: String) {
                         "userId" to uid
                     )
                     db.collection("orders").add(orderData).addOnSuccessListener {
+                        orderId.value = it.id
                         print("succes")
                         alertState.value = false
-                        navController.navigate("basket_screen/$totalPrice")
+                        if (orderId.value.isNotEmpty() || orderId.value != null){
+                            navController.navigate("basket_screen/$totalPrice/${orderId.value}")
+                        }else{
+                            Toast.makeText(context,"Sipariş oluşturulurken bir hata oluştu",Toast.LENGTH_SHORT).show()
+                        }
 
                     }
                 }else{
