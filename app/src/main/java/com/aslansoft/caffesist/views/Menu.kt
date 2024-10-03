@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.aslansoft.caffesist.views
 
 import android.annotation.SuppressLint
@@ -57,6 +59,7 @@ import com.aslansoft.caffesist.R
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.firestoreSettings
 import java.sql.Date
 import java.sql.Time
 import java.sql.Timestamp
@@ -114,6 +117,10 @@ fun Menu(navController: NavHostController,documentId: String) {
     val email = currentUser?.email
     val uid = currentUser?.uid
     LaunchedEffect(Unit) {
+        val settings = firestoreSettings {
+            isPersistenceEnabled = false
+        }
+        db.firestoreSettings = settings
         try {
             email?.let {
                 db.collection("users").document(it).get().addOnSuccessListener {

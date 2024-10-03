@@ -75,10 +75,10 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     // Use this dependency to bundle the model with your app
     //noinspection UseTomlInstead
-    implementation("com.google.mlkit:barcode-scanning:17.2.0")
+    implementation("com.google.mlkit:barcode-scanning:17.3.0")
     // Use this dependency to use the dynamically downloaded model in Google Play Services
     //noinspection UseTomlInstead
-    implementation ("com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.0")
+    implementation ("com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1")
     // The following line is optional, as the core library is included indirectly by camera-camera2
     //noinspection UseTomlInstead
     implementation ("androidx.camera:camera-core:1.4.0-beta01")
