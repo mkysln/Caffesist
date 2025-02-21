@@ -4,16 +4,23 @@ package com.aslansoft.caffesist.views
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.outlined.Call
 import androidx.compose.material3.Button
@@ -30,22 +37,31 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDirection
+import androidx.compose.ui.text.style.TextMotion
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
 import com.google.firebase.Firebase
@@ -58,7 +74,6 @@ import java.util.Calendar
 @Composable
 fun RegisterScreen(navController: NavHostController) {
     val userName = remember { mutableStateOf("") }
-    val userSurname = remember { mutableStateOf("") }
     val userEmail = remember { mutableStateOf("") }
     val userPassword = remember {
         mutableStateOf("")
@@ -76,207 +91,281 @@ fun RegisterScreen(navController: NavHostController) {
     val auth = Firebase.auth
     val db = Firebase.firestore
     val context = LocalContext.current
-    Surface (modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background){
-        Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
-          OutlinedTextField(value = userName.value, onValueChange = {
-              userName.value = it
-          }, label = {
-              Text(text = "İsim")
-          }, colors = OutlinedTextFieldDefaults.colors(
-              focusedTextColor = Color.White,
-              unfocusedTextColor = Color.LightGray,
-              unfocusedLabelColor = Color.LightGray,
-              unfocusedBorderColor = Color.LightGray
-          ),
-              singleLine = true)
-            Spacer(modifier = Modifier.padding(vertical = 5.dp))
-            OutlinedTextField(value = userSurname.value, onValueChange = {
-              userSurname.value = it
-          }, label = {
-              Text(text = "Soy İsim")
-            }, colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.LightGray,
-                unfocusedLabelColor = Color.LightGray,
-                unfocusedBorderColor = Color.LightGray
-            ),
-                singleLine = true)
+    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            TextField(
+                modifier = Modifier
+                    .background(
+                        color = Color(0x9FFFFAFA),
+                        shape = RoundedCornerShape(9.dp)
+                    )
+                    .clip(
+                        RoundedCornerShape(9.dp)
+                    )
+                    .fillMaxWidth(0.8f),
+                value = userName.value,
+                onValueChange = {
+                    userName.value = it
+
+                },
+                singleLine = true,
+                label = {
+                    Text("Ad Soyad:")
+                },
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    cursorColor = Color.White
+                ),
+                )
+
             Spacer(modifier = Modifier.padding(vertical = 5.dp))
 
-            OutlinedTextField(value = userEmail.value, onValueChange = {
-              userEmail.value = it
-          },
-                label = {
-                    Text(text = "E-posta")
+            //E-posta
+            TextField(
+                modifier = Modifier
+                    .background(
+                        color = Color(0x9FFFFAFA),
+                        shape = RoundedCornerShape(9.dp)
+                    )
+                    .clip(
+                        RoundedCornerShape(9.dp)
+                    )
+                ,
+                value = userEmail.value,
+                onValueChange = {
+                    userEmail.value = it
+
+                },
+                singleLine = true,
+                label = { Text("E-Posta:") },
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedLabelColor = Color.White
+                ),trailingIcon = {
+                    Icon(imageVector = Icons.Default.MailOutline, contentDescription = "")
+                }
+                )
+
+
+            Spacer(modifier = Modifier.padding(vertical = 5.dp))
+
+            PhoneField(
+                phone = userPhone.value,
+                mask = "+90 (000) 000 00 00",
+                maskNumber = '0',
+                onPhoneChanged = {
+                    userPhone.value = it
+                })
+            Spacer(modifier = Modifier.padding(vertical = 5.dp))
+            OutlinedTextField(value = userBirthDate.value, onValueChange = {
+                userBirthDate.value = it
+            },
+                readOnly = true,
+                trailingIcon = {
+                    Icon(
+                        modifier = Modifier.clickable { openDialog.value = true },
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = null
+                    )
+                }, label = {
+                    Text(text = "Doğum Tarihi")
                 }, colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.LightGray,
                     unfocusedLabelColor = Color.LightGray,
                     unfocusedBorderColor = Color.LightGray
-                ), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                singleLine = true,
-                trailingIcon = {
-                    Icon(imageVector = Icons.Default.MailOutline, contentDescription = "" )
-                }
+                ),
+                singleLine = true
             )
             Spacer(modifier = Modifier.padding(vertical = 5.dp))
 
-             PhoneField(phone = userPhone.value, mask = "+90 (000) 000 00 00", maskNumber = '0', onPhoneChanged = {
-                 userPhone.value = it
-             })
-            Spacer(modifier = Modifier.padding(vertical = 5.dp))
-                OutlinedTextField(value = userBirthDate.value, onValueChange ={
-                    userBirthDate.value = it
-                },
-                    readOnly = true,
-                    trailingIcon = {
-                        Icon(modifier = Modifier.clickable { openDialog.value = true },imageVector = Icons.Default.DateRange, contentDescription = null)
-                    }, label = {
-                        Text(text = "Doğum Tarihi")
-                    }, colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.LightGray,
-                        unfocusedLabelColor = Color.LightGray,
-                        unfocusedBorderColor = Color.LightGray
-                    ),
-                    singleLine = true)
-            Spacer(modifier = Modifier.padding(vertical = 5.dp))
-
-                OutlinedTextField(value = userPassword.value, onValueChange = {
+            OutlinedTextField(
+                value = userPassword.value, onValueChange = {
                     userPassword.value = it
                 },
-                    label = {
-                        Text(text = "Parola")
-                    }, colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.LightGray,
-                        unfocusedLabelColor = Color.LightGray,
-                        unfocusedBorderColor = Color.LightGray
-                    ),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                    visualTransformation = PasswordVisualTransformation(),
-                    singleLine = true
-                    )
+                label = {
+                    Text(text = "Parola")
+                }, colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.LightGray,
+                    unfocusedLabelColor = Color.LightGray,
+                    unfocusedBorderColor = Color.LightGray
+                ),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                visualTransformation = PasswordVisualTransformation(),
+                singleLine = true
+            )
 
             if (openDialog.value) {
-                DatePickerDialog(onDismissRequest = {
-                    openDialog.value
-                },
+                DatePickerDialog(
+                    onDismissRequest = {
+                        openDialog.value
+                    },
                     colors = DatePickerDefaults.colors(
                         containerColor = MaterialTheme.colorScheme.background,
                         dayContentColor = Color.White,
                         weekdayContentColor = MaterialTheme.colorScheme.primary,
                         subheadContentColor = MaterialTheme.colorScheme.primary
                     ), confirmButton = {
-                    Button(onClick = {
-                        val selectedMills = datePickerState.selectedDateMillis
-                        if (selectedMills != null){
-                            val calendar = Calendar.getInstance().apply {
-                                timeInMillis = selectedMills
+                        Button(onClick = {
+                            val selectedMills = datePickerState.selectedDateMillis
+                            if (selectedMills != null) {
+                                val calendar = Calendar.getInstance().apply {
+                                    timeInMillis = selectedMills
+                                }
+                                userBirthDate.value =
+                                    "${calendar.get(Calendar.DAY_OF_MONTH)}.${calendar.get(Calendar.MONTH) + 1}.${
+                                        calendar.get(Calendar.YEAR)
+                                    }"
+                                val timestamp = Timestamp(calendar.time)
+                                println(timestamp)
                             }
-                            userBirthDate.value = "${calendar.get(Calendar.DAY_OF_MONTH)}.${calendar.get(Calendar.MONTH) + 1}.${calendar.get(Calendar.YEAR)}"
-                            val timestamp = Timestamp(calendar.time)
-                            println(timestamp)
+                            openDialog.value = false
+                        }) {
+                            Text(text = "Onayla")
                         }
-                        openDialog.value = false
-                    }) {
-                        Text(text = "Onayla")
-                    }
-                },
+                    },
                     properties = DialogProperties(usePlatformDefaultWidth = true)
                 ) {
-                    DatePicker(state = datePickerState, colors = DatePickerDefaults.colors(
-                        containerColor = MaterialTheme.colorScheme.background
-                    ), title = { Text(modifier = Modifier.padding(start = 15.dp,top = 5.dp),text = "Doğum Tarihi")})
+                    DatePicker(state = datePickerState,
+                        colors = DatePickerDefaults.colors(
+                            containerColor = MaterialTheme.colorScheme.background
+                        ),
+                        title = {
+                            Text(
+                                modifier = Modifier.padding(start = 15.dp, top = 5.dp),
+                                text = "Doğum Tarihi"
+                            )
+                        })
 
                 }
             }
             Spacer(modifier = Modifier.padding(vertical = 5.dp))
-            ElevatedButton(onClick = {
-                val currentDate = Calendar.getInstance()
-                val birthDate = Calendar.getInstance().apply {
-                    val parts = userBirthDate.value.split(".")
-                    set(parts[2].toInt(), parts[1].toInt() - 1, parts[0].toInt())
-                }
-                var age = currentDate.get(Calendar.YEAR) - birthDate.get(Calendar.YEAR)
-                if (currentDate.get(Calendar.DAY_OF_YEAR) < birthDate.get(Calendar.DAY_OF_YEAR)) {
-                    age--
-                }
-                if(userName.value.isNotEmpty() && userSurname.value.isNotEmpty() && userEmail.value.isNotEmpty() && userPhone.value.isNotEmpty() && userPassword.value.isNotEmpty() && userBirthDate.value.isNotEmpty()){
-                    if (userEmail.value.endsWith(".com")&&userEmail.value.contains("@")){
-                        if (userPhone.value.startsWith("0")){
-                            if (userPassword.value.length >= 6){
-                                if (age>= 18){
-                                    val data = hashMapOf(
-                                        "name" to userName.value,
-                                        "surname" to userSurname.value,
-                                        "email" to userEmail.value,
-                                        "phone" to userPhone.value,
-                                        "birthDate" to userBirthDate.value
-                                    )
-                                    auth.fetchSignInMethodsForEmail(userEmail.value).addOnCompleteListener{ task ->
-                                        if (task.isSuccessful){
-                                            auth.createUserWithEmailAndPassword(userEmail.value,userPassword.value).addOnCompleteListener{createUser ->
-                                                if (createUser.isSuccessful){
-                                                    val currentUser = auth.currentUser
-                                                    currentUser?.sendEmailVerification()?.addOnCompleteListener { verified ->
-                                                        if (verified.isSuccessful){
-                                                            Toast.makeText(context,"Kaydınızı Tamamlamak İçin Lütfen E-Postanızı Doğrulayınız",Toast.LENGTH_LONG).show()
-                                                            db.collection("users").document(userEmail.value).set(data).addOnSuccessListener {
-                                                                println("person data succes database writing")
-                                                            }
-                                                            navController.navigate("login_screen")
-                                                        }else{
-                                                            Toast.makeText(context,"E-Posta Gönderilirken Bir Hata Oluştu",Toast.LENGTH_SHORT).show()
-                                                            println("sendEmailVerification:failure" + verified.exception)
-                                                        }
-                                                    }
-                                                }
-                                                else {
-                                                    // If sign in fails, display a message to the user.
-                                                    Log.w("ErrorAuth", "signInWithEmail:failure", task.exception)
-                                                    Toast.makeText(
-                                                        context,
-                                                        task.exception.toString(),
-                                                        Toast.LENGTH_SHORT,
-                                                    ).show()
+            ElevatedButton(
+                onClick = {
+                    val currentDate = Calendar.getInstance()
+                    val birthDate = Calendar.getInstance().apply {
+                        val parts = userBirthDate.value.split(".")
+                        set(parts[2].toInt(), parts[1].toInt() - 1, parts[0].toInt())
+                    }
+                    var age = currentDate.get(Calendar.YEAR) - birthDate.get(Calendar.YEAR)
+                    if (currentDate.get(Calendar.DAY_OF_YEAR) < birthDate.get(Calendar.DAY_OF_YEAR)) {
+                        age--
+                    }
+                    if (userName.value.isNotEmpty() &&  userEmail.value.isNotEmpty() && userPhone.value.isNotEmpty() && userPassword.value.isNotEmpty() && userBirthDate.value.isNotEmpty()) {
+                        if (userEmail.value.endsWith(".com") && userEmail.value.contains("@")) {
+                            if (userPhone.value.startsWith("0")) {
+                                if (userPassword.value.length >= 6) {
+                                    if (age >= 18) {
+                                        val data = hashMapOf(
+                                            "name" to userName.value,
+                                            "email" to userEmail.value,
+                                            "phone" to userPhone.value,
+                                            "birthDate" to userBirthDate.value
+                                        )
+                                        auth.fetchSignInMethodsForEmail(userEmail.value)
+                                            .addOnCompleteListener { task ->
+                                                if (task.isSuccessful) {
+                                                    auth.createUserWithEmailAndPassword(
+                                                        userEmail.value,
+                                                        userPassword.value
+                                                    ).addOnCompleteListener { createUser ->
+                                                        if (createUser.isSuccessful) {
+                                                            val currentUser = auth.currentUser
+                                                            currentUser?.sendEmailVerification()
+                                                                ?.addOnCompleteListener { verified ->
+                                                                    if (verified.isSuccessful) {
+                                                                        Toast.makeText(
+                                                                            context,
+                                                                            "Kaydınızı Tamamlamak İçin Lütfen E-Postanızı Doğrulayınız",
+                                                                            Toast.LENGTH_LONG
+                                                                        ).show()
+                                                                        db.collection("users")
+                                                                            .document(userEmail.value)
+                                                                            .set(data)
+                                                                            .addOnSuccessListener {
+                                                                                println("person data succes database writing")
+                                                                            }
+                                                                        navController.navigate("login_screen")
+                                                                    } else {
+                                                                        Toast.makeText(
+                                                                            context,
+                                                                            "E-Posta Gönderilirken Bir Hata Oluştu",
+                                                                            Toast.LENGTH_SHORT
+                                                                        ).show()
+                                                                        println("sendEmailVerification:failure" + verified.exception)
+                                                                    }
+                                                                }
+                                                        } else {
+                                                            // If sign in fails, display a message to the user.
+                                                            Log.w(
+                                                                "ErrorAuth",
+                                                                "signInWithEmail:failure",
+                                                                task.exception
+                                                            )
+                                                            Toast.makeText(
+                                                                context,
+                                                                task.exception.toString(),
+                                                                Toast.LENGTH_SHORT,
+                                                            ).show()
 
+                                                        }
+
+                                                    }
                                                 }
 
                                             }
-                                        }
 
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            "Kullanıcı 18 Yaşın Altında Olamaz",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
-
-                                }else{
-                                    Toast.makeText(context,"Kullanıcı 18 Yaşın Altında Olamaz",Toast.LENGTH_SHORT).show()
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "Parola En Az 6 Karakterden Oluşmalıdır",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
-                            }else{
-                                Toast.makeText(context,"Parola En Az 6 Karakterden Oluşmalıdır",Toast.LENGTH_SHORT).show()
-                            }
 
-                        }else{
-                            Toast.makeText(context,"Lütfen Telefon Numaranızı Doğru Biçimde Yazınız", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "Lütfen Telefon Numaranızı Doğru Biçimde Yazınız",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "Lütfen E-Postanızı Doğru Biçimde Yazınız",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
-                    }else{
-                        Toast.makeText(context,"Lütfen E-Postanızı Doğru Biçimde Yazınız",Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(context, "Lütfen Tüm Alanları Doldurun", Toast.LENGTH_SHORT)
+                            .show()
                     }
-                }
-                else{
-                    Toast.makeText(context,"Lütfen Tüm Alanları Doldurun",Toast.LENGTH_SHORT).show()
-                }
-            }, colors = ButtonDefaults.elevatedButtonColors(
-                contentColor = Color.White,
-                containerColor = MaterialTheme.colorScheme.primary
-            )) {
+                }, colors = ButtonDefaults.elevatedButtonColors(
+                    contentColor = Color.White,
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            ) {
                 Text(text = "Kaydol")
                 Icon(imageVector = Icons.Default.ArrowForward, contentDescription = "")
             }
         }
     }
 }
-
-
 
 
 @Composable
@@ -287,7 +376,7 @@ fun PhoneField(
     maskNumber: Char = '0',
     onPhoneChanged: (String) -> Unit
 ) {
-    OutlinedTextField(
+    TextField(modifier = Modifier.clip(shape = RoundedCornerShape(9.dp)),
         value = phone,
         onValueChange = { it ->
             onPhoneChanged(it.take(mask.count { it == maskNumber }))
@@ -297,8 +386,12 @@ fun PhoneField(
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
         visualTransformation = PhoneVisualTransformation(mask, maskNumber),
-        trailingIcon = { Icon(imageVector = Icons.Outlined.Call, contentDescription = "")},
-        singleLine = true
+        trailingIcon = { Icon(imageVector = Icons.Outlined.Call, contentDescription = "") },
+        singleLine = true,
+        colors = TextFieldDefaults.colors(
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent
+        )
     )
 }
 
