@@ -2,8 +2,13 @@
 
 package com.aslansoft.caffesist.views
 
+import EyeClosed
+import EyeOpen
 import android.util.Log
+import android.view.animation.Transformation
+import android.widget.Space
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -14,9 +19,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.DateRange
@@ -32,6 +39,7 @@ import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -47,7 +55,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -64,6 +74,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
+import com.aslansoft.caffesist.R
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.auth
@@ -97,6 +108,11 @@ fun RegisterScreen(navController: NavHostController) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Image(
+                bitmap = ImageBitmap.imageResource(R.drawable.caffesist_logo_bg),
+                contentDescription = ""
+            )
+            Spacer(modifier = Modifier.padding(vertical = 20.dp))
             TextField(
                 modifier = Modifier
                     .background(
@@ -105,8 +121,7 @@ fun RegisterScreen(navController: NavHostController) {
                     )
                     .clip(
                         RoundedCornerShape(9.dp)
-                    )
-                    .fillMaxWidth(0.8f),
+                    ),
                 value = userName.value,
                 onValueChange = {
                     userName.value = it
@@ -119,9 +134,14 @@ fun RegisterScreen(navController: NavHostController) {
                 colors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
-                    cursorColor = Color.White
+                    cursorColor = Color.White,
+                    selectionColors = TextSelectionColors(
+                        handleColor = Color.White,
+                        backgroundColor = Color.Gray
+                    ),
+                    focusedLabelColor = Color.White
                 ),
-                )
+            )
 
             Spacer(modifier = Modifier.padding(vertical = 5.dp))
 
@@ -134,8 +154,7 @@ fun RegisterScreen(navController: NavHostController) {
                     )
                     .clip(
                         RoundedCornerShape(9.dp)
-                    )
-                ,
+                    ),
                 value = userEmail.value,
                 onValueChange = {
                     userEmail.value = it
@@ -146,11 +165,16 @@ fun RegisterScreen(navController: NavHostController) {
                 colors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
-                    focusedLabelColor = Color.White
-                ),trailingIcon = {
+                    focusedLabelColor = Color.White,
+                    cursorColor = Color.White,
+                    selectionColors = TextSelectionColors(
+                        handleColor = Color.White,
+                        backgroundColor = Color.Gray
+                    )
+                ), trailingIcon = {
                     Icon(imageVector = Icons.Default.MailOutline, contentDescription = "")
                 }
-                )
+            )
 
 
             Spacer(modifier = Modifier.padding(vertical = 5.dp))
@@ -163,9 +187,11 @@ fun RegisterScreen(navController: NavHostController) {
                     userPhone.value = it
                 })
             Spacer(modifier = Modifier.padding(vertical = 5.dp))
-            OutlinedTextField(value = userBirthDate.value, onValueChange = {
-                userBirthDate.value = it
-            },
+            TextField(modifier = Modifier.clip(RoundedCornerShape(9.dp)),
+                value = userBirthDate.value,
+                onValueChange = {
+                    userBirthDate.value = it
+                },
                 readOnly = true,
                 trailingIcon = {
                     Icon(
@@ -173,33 +199,58 @@ fun RegisterScreen(navController: NavHostController) {
                         imageVector = Icons.Default.DateRange,
                         contentDescription = null
                     )
-                }, label = {
+                },
+                label = {
                     Text(text = "Doğum Tarihi")
-                }, colors = OutlinedTextFieldDefaults.colors(
+                },
+                colors = TextFieldDefaults.colors(
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.LightGray,
                     unfocusedLabelColor = Color.LightGray,
-                    unfocusedBorderColor = Color.LightGray
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedLabelColor = Color.White
                 ),
                 singleLine = true
             )
             Spacer(modifier = Modifier.padding(vertical = 5.dp))
-
-            OutlinedTextField(
-                value = userPassword.value, onValueChange = {
+            val hidePassword = remember { mutableStateOf(true) }
+            TextField(
+                modifier = Modifier
+                    .background(
+                        color = Color(0x9FFFFAFA),
+                        shape = RoundedCornerShape(9.dp)
+                    )
+                    .clip(
+                        RoundedCornerShape(9.dp)
+                    ),
+                value = userPassword.value,
+                onValueChange = {
                     userPassword.value = it
+
                 },
-                label = {
-                    Text(text = "Parola")
-                }, colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.LightGray,
-                    unfocusedLabelColor = Color.LightGray,
-                    unfocusedBorderColor = Color.LightGray
-                ),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                visualTransformation = PasswordVisualTransformation(),
-                singleLine = true
+                singleLine = true,
+                label = { Text("Parola") },
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedLabelColor = Color.White,
+                    cursorColor = Color.White,
+                    selectionColors = TextSelectionColors(handleColor = Color.White, backgroundColor = Color.Gray)
+                    ),
+                visualTransformation = if (hidePassword.value) PasswordVisualTransformation() else VisualTransformation.None,
+                trailingIcon = {
+                    if (hidePassword.value) {
+                        IconButton(onClick = { hidePassword.value = false }) {
+                            Icon(imageVector = EyeClosed, contentDescription = "")
+
+                        }
+                    } else {
+                        IconButton(onClick = { hidePassword.value = true }) {
+                            Icon(imageVector = EyeOpen, contentDescription = "")
+                        }
+                    }
+                }
             )
 
             if (openDialog.value) {
@@ -246,8 +297,11 @@ fun RegisterScreen(navController: NavHostController) {
 
                 }
             }
-            Spacer(modifier = Modifier.padding(vertical = 5.dp))
+            Spacer(modifier = Modifier.padding(vertical = 4.dp))
             ElevatedButton(
+                modifier = Modifier
+                    .width(280.dp)
+                    .height(58.dp),
                 onClick = {
                     val currentDate = Calendar.getInstance()
                     val birthDate = Calendar.getInstance().apply {
@@ -258,7 +312,7 @@ fun RegisterScreen(navController: NavHostController) {
                     if (currentDate.get(Calendar.DAY_OF_YEAR) < birthDate.get(Calendar.DAY_OF_YEAR)) {
                         age--
                     }
-                    if (userName.value.isNotEmpty() &&  userEmail.value.isNotEmpty() && userPhone.value.isNotEmpty() && userPassword.value.isNotEmpty() && userBirthDate.value.isNotEmpty()) {
+                    if (userName.value.isNotEmpty() && userEmail.value.isNotEmpty() && userPhone.value.isNotEmpty() && userPassword.value.isNotEmpty() && userBirthDate.value.isNotEmpty()) {
                         if (userEmail.value.endsWith(".com") && userEmail.value.contains("@")) {
                             if (userPhone.value.startsWith("0")) {
                                 if (userPassword.value.length >= 6) {
@@ -358,10 +412,10 @@ fun RegisterScreen(navController: NavHostController) {
                 }, colors = ButtonDefaults.elevatedButtonColors(
                     contentColor = Color.White,
                     containerColor = MaterialTheme.colorScheme.primary
-                )
+                ),
+                shape = RoundedCornerShape(9.dp)
             ) {
-                Text(text = "Kaydol")
-                Icon(imageVector = Icons.Default.ArrowForward, contentDescription = "")
+                Text(text = "Kaydol", fontSize = 18.sp, fontWeight = FontWeight.Bold)
             }
         }
     }
@@ -376,7 +430,8 @@ fun PhoneField(
     maskNumber: Char = '0',
     onPhoneChanged: (String) -> Unit
 ) {
-    TextField(modifier = Modifier.clip(shape = RoundedCornerShape(9.dp)),
+    TextField(
+        modifier = Modifier.clip(shape = RoundedCornerShape(9.dp)),
         value = phone,
         onValueChange = { it ->
             onPhoneChanged(it.take(mask.count { it == maskNumber }))
@@ -390,7 +445,13 @@ fun PhoneField(
         singleLine = true,
         colors = TextFieldDefaults.colors(
             focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent
+            unfocusedIndicatorColor = Color.Transparent,
+            focusedLabelColor = Color.White,
+            cursorColor = Color.White,
+            selectionColors = TextSelectionColors(
+                handleColor = Color.White,
+                backgroundColor = Color.Gray
+            )
         )
     )
 }
