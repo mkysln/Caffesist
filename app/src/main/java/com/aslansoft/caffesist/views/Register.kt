@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -53,11 +54,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -74,7 +80,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
+import coil.compose.ImagePainter
 import com.aslansoft.caffesist.R
+import com.aslansoft.caffesist.ui.theme.Purple40
+import com.aslansoft.caffesist.ui.theme.Purple80
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.auth
@@ -102,23 +111,22 @@ fun RegisterScreen(navController: NavHostController) {
     val auth = Firebase.auth
     val db = Firebase.firestore
     val context = LocalContext.current
-    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+    Surface(modifier = Modifier.fillMaxSize()) {
         Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxSize()
+                .paint(painterResource(R.drawable.background), contentScale = ContentScale.Crop),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(Modifier.padding(vertical = 40.dp))
             Image(
+                modifier = Modifier.size(130.dp),
                 bitmap = ImageBitmap.imageResource(R.drawable.caffesist_logo_bg),
                 contentDescription = ""
             )
-            Spacer(modifier = Modifier.padding(vertical = 20.dp))
+            Spacer(modifier = Modifier.padding(vertical = 10.dp))
             TextField(
                 modifier = Modifier
-                    .background(
-                        color = Color(0x9FFFFAFA),
-                        shape = RoundedCornerShape(9.dp)
-                    )
                     .clip(
                         RoundedCornerShape(9.dp)
                     ),
@@ -134,12 +142,17 @@ fun RegisterScreen(navController: NavHostController) {
                 colors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
-                    cursorColor = Color.White,
+                    cursorColor = Color.Black,
                     selectionColors = TextSelectionColors(
-                        handleColor = Color.White,
+                        handleColor = Color.Black,
                         backgroundColor = Color.Gray
                     ),
-                    focusedLabelColor = Color.White
+                    focusedLabelColor = Color.Black,
+                    unfocusedLabelColor = Color.Black,
+                    focusedContainerColor = Color(0x80FFFAFA),
+                    unfocusedContainerColor = Color(0x80FFFAFA),
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.Black
                 ),
             )
 
@@ -148,10 +161,6 @@ fun RegisterScreen(navController: NavHostController) {
             //E-posta
             TextField(
                 modifier = Modifier
-                    .background(
-                        color = Color(0x9FFFFAFA),
-                        shape = RoundedCornerShape(9.dp)
-                    )
                     .clip(
                         RoundedCornerShape(9.dp)
                     ),
@@ -165,12 +174,17 @@ fun RegisterScreen(navController: NavHostController) {
                 colors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
-                    focusedLabelColor = Color.White,
-                    cursorColor = Color.White,
+                    cursorColor = Color.Black,
                     selectionColors = TextSelectionColors(
-                        handleColor = Color.White,
+                        handleColor = Color.Black,
                         backgroundColor = Color.Gray
-                    )
+                    ),
+                    focusedLabelColor = Color.Black,
+                    unfocusedLabelColor = Color.Black,
+                    focusedContainerColor = Color(0x80FFFAFA),
+                    unfocusedContainerColor = Color(0x80FFFAFA),
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.Black
                 ), trailingIcon = {
                     Icon(imageVector = Icons.Default.MailOutline, contentDescription = "")
                 }
@@ -187,7 +201,8 @@ fun RegisterScreen(navController: NavHostController) {
                     userPhone.value = it
                 })
             Spacer(modifier = Modifier.padding(vertical = 5.dp))
-            TextField(modifier = Modifier.clip(RoundedCornerShape(9.dp)),
+            TextField(
+                modifier = Modifier.clip(RoundedCornerShape(9.dp)),
                 value = userBirthDate.value,
                 onValueChange = {
                     userBirthDate.value = it
@@ -204,12 +219,19 @@ fun RegisterScreen(navController: NavHostController) {
                     Text(text = "Doğum Tarihi")
                 },
                 colors = TextFieldDefaults.colors(
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.LightGray,
-                    unfocusedLabelColor = Color.LightGray,
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
-                    focusedLabelColor = Color.White
+                    cursorColor = Color.Black,
+                    selectionColors = TextSelectionColors(
+                        handleColor = Color.Black,
+                        backgroundColor = Color.Gray
+                    ),
+                    focusedLabelColor = Color.Black,
+                    unfocusedLabelColor = Color.Black,
+                    focusedContainerColor = Color(0x80FFFAFA),
+                    unfocusedContainerColor = Color(0x80FFFAFA),
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.Black
                 ),
                 singleLine = true
             )
@@ -217,10 +239,6 @@ fun RegisterScreen(navController: NavHostController) {
             val hidePassword = remember { mutableStateOf(true) }
             TextField(
                 modifier = Modifier
-                    .background(
-                        color = Color(0x9FFFFAFA),
-                        shape = RoundedCornerShape(9.dp)
-                    )
                     .clip(
                         RoundedCornerShape(9.dp)
                     ),
@@ -234,10 +252,18 @@ fun RegisterScreen(navController: NavHostController) {
                 colors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
-                    focusedLabelColor = Color.White,
-                    cursorColor = Color.White,
-                    selectionColors = TextSelectionColors(handleColor = Color.White, backgroundColor = Color.Gray)
+                    cursorColor = Color.Black,
+                    selectionColors = TextSelectionColors(
+                        handleColor = Color.Black,
+                        backgroundColor = Color.Gray
                     ),
+                    focusedLabelColor = Color.Black,
+                    unfocusedLabelColor = Color.Black,
+                    focusedContainerColor = Color(0x80FFFAFA),
+                    unfocusedContainerColor = Color(0x80FFFAFA),
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.Black
+                ),
                 visualTransformation = if (hidePassword.value) PasswordVisualTransformation() else VisualTransformation.None,
                 trailingIcon = {
                     if (hidePassword.value) {
@@ -297,7 +323,7 @@ fun RegisterScreen(navController: NavHostController) {
 
                 }
             }
-            Spacer(modifier = Modifier.padding(vertical = 4.dp))
+            Spacer(modifier = Modifier.padding(vertical = 35.dp))
             ElevatedButton(
                 modifier = Modifier
                     .width(280.dp)
@@ -409,11 +435,17 @@ fun RegisterScreen(navController: NavHostController) {
                         Toast.makeText(context, "Lütfen Tüm Alanları Doldurun", Toast.LENGTH_SHORT)
                             .show()
                     }
-                }, colors = ButtonDefaults.elevatedButtonColors(
+                },
+                colors = ButtonDefaults.elevatedButtonColors(
                     contentColor = Color.White,
-                    containerColor = MaterialTheme.colorScheme.primary
+                    containerColor = Purple40
                 ),
-                shape = RoundedCornerShape(9.dp)
+                shape = RoundedCornerShape(9.dp),
+                elevation = ButtonDefaults.elevatedButtonElevation(
+                    defaultElevation = 10.dp,
+                    focusedElevation = 30.dp,
+                    hoveredElevation = 35.dp
+                )
             ) {
                 Text(text = "Kaydol", fontSize = 18.sp, fontWeight = FontWeight.Bold)
             }
@@ -446,12 +478,17 @@ fun PhoneField(
         colors = TextFieldDefaults.colors(
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
-            focusedLabelColor = Color.White,
-            cursorColor = Color.White,
+            cursorColor = Color.Black,
             selectionColors = TextSelectionColors(
-                handleColor = Color.White,
+                handleColor = Color.Black,
                 backgroundColor = Color.Gray
-            )
+            ),
+            focusedLabelColor = Color.Black,
+            unfocusedLabelColor = Color.Black,
+            focusedContainerColor = Color(0x80FFFAFA),
+            unfocusedContainerColor = Color(0x80FFFAFA),
+            focusedTextColor = Color.Black,
+            unfocusedTextColor = Color.Black
         )
     )
 }
