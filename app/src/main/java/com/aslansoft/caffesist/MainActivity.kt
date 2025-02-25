@@ -3,6 +3,16 @@ package com.aslansoft.caffesist
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideIn
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,13 +64,19 @@ class MainActivity : ComponentActivity() {
 
 
                 NavHost(navController = navController, startDestination = startDestination.value){
-                    composable("login_screen"){
+                    composable("login_screen",
+                        enterTransition = { fadeIn() },
+                        exitTransition = { fadeOut() }){
                         Login(navController = navController)
                     }
-                    composable("register_screen"){
+                    composable("register_screen",
+                        enterTransition = { slideInVertically() },
+                        exitTransition = { slideOutVertically() }){
                         RegisterScreen(navController = navController)
                     }
-                    composable("main_screen"){
+                    composable("main_screen",
+                        enterTransition = { slideInHorizontally() },
+                        exitTransition = { slideOutHorizontally() }){
                         MainScreen(navController = navController)
                     }
                     composable("camera"){

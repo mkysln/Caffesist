@@ -13,6 +13,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -115,21 +117,22 @@ fun RegisterScreen(navController: NavHostController) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .paint(painterResource(R.drawable.background), contentScale = ContentScale.Crop),
+                .paint( painter = painterResource(R.drawable.login_bg), contentScale = ContentScale.Crop),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(Modifier.padding(vertical = 40.dp))
-            Image(
-                modifier = Modifier.size(130.dp),
-                bitmap = ImageBitmap.imageResource(R.drawable.caffesist_logo_bg),
-                contentDescription = ""
-            )
-            Spacer(modifier = Modifier.padding(vertical = 10.dp))
+            Box(modifier = Modifier.width(500.dp), contentAlignment = Alignment.Center){
+                Image(painter = painterResource(R.drawable.caffesist_logo),
+                    contentDescription = "", contentScale = ContentScale.Fit,
+                )
+            }
+
+            Spacer(modifier = Modifier.padding(vertical = 30.dp))
             TextField(
                 modifier = Modifier
                     .clip(
                         RoundedCornerShape(9.dp)
-                    ),
+                    )
+                    .height(50.dp),
                 value = userName.value,
                 onValueChange = {
                     userName.value = it
@@ -144,8 +147,7 @@ fun RegisterScreen(navController: NavHostController) {
                     unfocusedIndicatorColor = Color.Transparent,
                     cursorColor = Color.Black,
                     selectionColors = TextSelectionColors(
-                        handleColor = Color.Black,
-                        backgroundColor = Color.Gray
+                        handleColor = Color.Black, backgroundColor = Color.Gray
                     ),
                     focusedLabelColor = Color.Black,
                     unfocusedLabelColor = Color.Black,
@@ -159,11 +161,11 @@ fun RegisterScreen(navController: NavHostController) {
             Spacer(modifier = Modifier.padding(vertical = 5.dp))
 
             //E-posta
-            TextField(
-                modifier = Modifier
-                    .clip(
-                        RoundedCornerShape(9.dp)
-                    ),
+            TextField(modifier = Modifier
+                .clip(
+                    RoundedCornerShape(9.dp)
+                )
+                .height(50.dp),
                 value = userEmail.value,
                 onValueChange = {
                     userEmail.value = it
@@ -176,8 +178,7 @@ fun RegisterScreen(navController: NavHostController) {
                     unfocusedIndicatorColor = Color.Transparent,
                     cursorColor = Color.Black,
                     selectionColors = TextSelectionColors(
-                        handleColor = Color.Black,
-                        backgroundColor = Color.Gray
+                        handleColor = Color.Black, backgroundColor = Color.Gray
                     ),
                     focusedLabelColor = Color.Black,
                     unfocusedLabelColor = Color.Black,
@@ -185,16 +186,19 @@ fun RegisterScreen(navController: NavHostController) {
                     unfocusedContainerColor = Color(0x80FFFAFA),
                     focusedTextColor = Color.Black,
                     unfocusedTextColor = Color.Black
-                ), trailingIcon = {
-                    Icon(imageVector = Icons.Default.MailOutline, contentDescription = "")
-                }
-            )
+                ),
+                trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.MailOutline,
+                        contentDescription = "",
+                        tint = Color.Black
+                    )
+                })
 
 
             Spacer(modifier = Modifier.padding(vertical = 5.dp))
 
-            PhoneField(
-                phone = userPhone.value,
+            PhoneField(phone = userPhone.value,
                 mask = "+90 (000) 000 00 00",
                 maskNumber = '0',
                 onPhoneChanged = {
@@ -202,7 +206,9 @@ fun RegisterScreen(navController: NavHostController) {
                 })
             Spacer(modifier = Modifier.padding(vertical = 5.dp))
             TextField(
-                modifier = Modifier.clip(RoundedCornerShape(9.dp)),
+                modifier = Modifier
+                    .clip(RoundedCornerShape(9.dp))
+                    .height(50.dp),
                 value = userBirthDate.value,
                 onValueChange = {
                     userBirthDate.value = it
@@ -212,7 +218,8 @@ fun RegisterScreen(navController: NavHostController) {
                     Icon(
                         modifier = Modifier.clickable { openDialog.value = true },
                         imageVector = Icons.Default.DateRange,
-                        contentDescription = null
+                        contentDescription = null,
+                        tint = Color.Black
                     )
                 },
                 label = {
@@ -223,8 +230,7 @@ fun RegisterScreen(navController: NavHostController) {
                     unfocusedIndicatorColor = Color.Transparent,
                     cursorColor = Color.Black,
                     selectionColors = TextSelectionColors(
-                        handleColor = Color.Black,
-                        backgroundColor = Color.Gray
+                        handleColor = Color.Black, backgroundColor = Color.Gray
                     ),
                     focusedLabelColor = Color.Black,
                     unfocusedLabelColor = Color.Black,
@@ -237,11 +243,11 @@ fun RegisterScreen(navController: NavHostController) {
             )
             Spacer(modifier = Modifier.padding(vertical = 5.dp))
             val hidePassword = remember { mutableStateOf(true) }
-            TextField(
-                modifier = Modifier
-                    .clip(
-                        RoundedCornerShape(9.dp)
-                    ),
+            TextField(modifier = Modifier
+                .clip(
+                    RoundedCornerShape(9.dp)
+                )
+                .height(50.dp),
                 value = userPassword.value,
                 onValueChange = {
                     userPassword.value = it
@@ -254,8 +260,7 @@ fun RegisterScreen(navController: NavHostController) {
                     unfocusedIndicatorColor = Color.Transparent,
                     cursorColor = Color.Black,
                     selectionColors = TextSelectionColors(
-                        handleColor = Color.Black,
-                        backgroundColor = Color.Gray
+                        handleColor = Color.Black, backgroundColor = Color.Gray
                     ),
                     focusedLabelColor = Color.Black,
                     unfocusedLabelColor = Color.Black,
@@ -268,23 +273,23 @@ fun RegisterScreen(navController: NavHostController) {
                 trailingIcon = {
                     if (hidePassword.value) {
                         IconButton(onClick = { hidePassword.value = false }) {
-                            Icon(imageVector = EyeClosed, contentDescription = "")
+                            Icon(
+                                imageVector = EyeClosed, contentDescription = "", tint = Color.Black
+                            )
 
                         }
                     } else {
                         IconButton(onClick = { hidePassword.value = true }) {
-                            Icon(imageVector = EyeOpen, contentDescription = "")
+                            Icon(imageVector = EyeOpen, contentDescription = "", tint = Color.Black)
                         }
                     }
-                }
-            )
+                })
 
             if (openDialog.value) {
                 DatePickerDialog(
                     onDismissRequest = {
                         openDialog.value
-                    },
-                    colors = DatePickerDefaults.colors(
+                    }, colors = DatePickerDefaults.colors(
                         containerColor = MaterialTheme.colorScheme.background,
                         dayContentColor = Color.White,
                         weekdayContentColor = MaterialTheme.colorScheme.primary,
@@ -307,19 +312,16 @@ fun RegisterScreen(navController: NavHostController) {
                         }) {
                             Text(text = "Onayla")
                         }
-                    },
-                    properties = DialogProperties(usePlatformDefaultWidth = true)
+                    }, properties = DialogProperties(usePlatformDefaultWidth = true)
                 ) {
-                    DatePicker(state = datePickerState,
-                        colors = DatePickerDefaults.colors(
-                            containerColor = MaterialTheme.colorScheme.background
-                        ),
-                        title = {
-                            Text(
-                                modifier = Modifier.padding(start = 15.dp, top = 5.dp),
-                                text = "Doğum Tarihi"
-                            )
-                        })
+                    DatePicker(state = datePickerState, colors = DatePickerDefaults.colors(
+                        containerColor = MaterialTheme.colorScheme.background
+                    ), title = {
+                        Text(
+                            modifier = Modifier.padding(start = 15.dp, top = 5.dp),
+                            text = "Doğum Tarihi"
+                        )
+                    })
 
                 }
             }
@@ -353,8 +355,7 @@ fun RegisterScreen(navController: NavHostController) {
                                             .addOnCompleteListener { task ->
                                                 if (task.isSuccessful) {
                                                     auth.createUserWithEmailAndPassword(
-                                                        userEmail.value,
-                                                        userPassword.value
+                                                        userEmail.value, userPassword.value
                                                     ).addOnCompleteListener { createUser ->
                                                         if (createUser.isSuccessful) {
                                                             val currentUser = auth.currentUser
@@ -437,17 +438,14 @@ fun RegisterScreen(navController: NavHostController) {
                     }
                 },
                 colors = ButtonDefaults.elevatedButtonColors(
-                    contentColor = Color.White,
-                    containerColor = Purple40
+                    contentColor = Color.White, containerColor = Purple40
                 ),
                 shape = RoundedCornerShape(9.dp),
                 elevation = ButtonDefaults.elevatedButtonElevation(
-                    defaultElevation = 10.dp,
-                    focusedElevation = 30.dp,
-                    hoveredElevation = 35.dp
+                    defaultElevation = 10.dp, focusedElevation = 30.dp, hoveredElevation = 35.dp
                 )
             ) {
-                Text(text = "Kaydol", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Text(text = "Kayıt Ol", fontSize = 18.sp, fontWeight = FontWeight.Bold)
             }
         }
     }
@@ -463,7 +461,9 @@ fun PhoneField(
     onPhoneChanged: (String) -> Unit
 ) {
     TextField(
-        modifier = Modifier.clip(shape = RoundedCornerShape(9.dp)),
+        modifier = Modifier
+            .clip(shape = RoundedCornerShape(9.dp))
+            .height(50.dp),
         value = phone,
         onValueChange = { it ->
             onPhoneChanged(it.take(mask.count { it == maskNumber }))
@@ -473,15 +473,18 @@ fun PhoneField(
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
         visualTransformation = PhoneVisualTransformation(mask, maskNumber),
-        trailingIcon = { Icon(imageVector = Icons.Outlined.Call, contentDescription = "") },
+        trailingIcon = {
+            Icon(
+                imageVector = Icons.Outlined.Call, contentDescription = "", tint = Color.Black
+            )
+        },
         singleLine = true,
         colors = TextFieldDefaults.colors(
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             cursorColor = Color.Black,
             selectionColors = TextSelectionColors(
-                handleColor = Color.Black,
-                backgroundColor = Color.Gray
+                handleColor = Color.Black, backgroundColor = Color.Gray
             ),
             focusedLabelColor = Color.Black,
             unfocusedLabelColor = Color.Black,

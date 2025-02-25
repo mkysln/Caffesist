@@ -42,6 +42,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -86,11 +87,12 @@ fun MainScreen(navController: NavHostController) {
         }
 
     }
-    Surface(color = MaterialTheme.colorScheme.background) {
+    Surface() {
 
 
         Column(modifier = Modifier
-            .fillMaxSize()) {
+            .fillMaxSize()
+            .paint(painterResource(R.drawable.main_bg))) {
             Row(modifier = Modifier.fillMaxWidth()) {
                 ElevatedCard(modifier = Modifier
                     .height(200.dp)
