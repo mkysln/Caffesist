@@ -87,7 +87,7 @@ fun MainScreen(navController: NavHostController) {
         }
 
     }
-    Surface() {
+    Surface {
 
 
         Column(modifier = Modifier

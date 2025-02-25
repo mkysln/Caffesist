@@ -56,52 +56,57 @@ class MainActivity : ComponentActivity() {
                     mutableStateOf(false)
                 }
 
-                    if (auth.currentUser != null){
-                        startDestination.value = "main_screen"
-                    }else{
-                        startDestination.value = "login_screen"
-                    }
+                if (auth.currentUser != null) {
+                    startDestination.value = "main_screen"
+                } else {
+                    startDestination.value = "login_screen"
+                }
 
 
-                NavHost(navController = navController, startDestination = startDestination.value){
+                NavHost(navController = navController, startDestination = startDestination.value) {
                     composable("login_screen",
                         enterTransition = { fadeIn() },
-                        exitTransition = { fadeOut() }){
+                        exitTransition = { fadeOut() }) {
                         Login(navController = navController)
                     }
                     composable("register_screen",
                         enterTransition = { slideInVertically() },
-                        exitTransition = { slideOutVertically() }){
+                        exitTransition = { slideOutVertically() }) {
                         RegisterScreen(navController = navController)
                     }
                     composable("main_screen",
                         enterTransition = { slideInHorizontally() },
-                        exitTransition = { slideOutHorizontally() }){
+                        exitTransition = { slideOutHorizontally() }) {
                         MainScreen(navController = navController)
                     }
-                    composable("camera"){
+                    composable("camera") {
                         Camera(navController = navController)
                     }
-                    composable("menu_screen/{documentId}"){backStackEntry ->
+                    composable("menu_screen/{documentId}") { backStackEntry ->
                         backStackEntry.arguments?.getString("documentId")
                             ?.let { Menu(navController = navController, documentId = it) }
                     }
-                    composable("basket_screen/{totalPrice}/{orderId}", arguments = listOf(
-                        navArgument("totalPrice"){type = NavType.StringType},
-                        navArgument("orderId"){type = NavType.StringType},
-                    )){backStackEntry ->
+                    composable(
+                        "basket_screen/{totalPrice}/{orderId}", arguments = listOf(
+                            navArgument("totalPrice") { type = NavType.StringType },
+                            navArgument("orderId") { type = NavType.StringType },
+                        )
+                    ) { backStackEntry ->
                         val totalPrice = backStackEntry.arguments?.getString("totalPrice")
                         val orderId = backStackEntry.arguments?.getString("orderId")
-                        BasketScreen(navController = navController, totalPrice = totalPrice,orderId = orderId)
+                        BasketScreen(
+                            navController = navController,
+                            totalPrice = totalPrice,
+                            orderId = orderId
+                        )
                     }
-                    composable("no_internet"){
+                    composable("no_internet") {
                         NoInternetScreen(navController = navController)
                     }
-                    composable("history"){
+                    composable("history") {
                         History(navController = navController)
                     }
                 }
-
 
 
             }

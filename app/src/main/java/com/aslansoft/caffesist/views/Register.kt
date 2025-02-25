@@ -5,32 +5,21 @@ package com.aslansoft.caffesist.views
 import EyeClosed
 import EyeOpen
 import android.util.Log
-import android.view.animation.Transformation
-import android.widget.Space
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.outlined.Call
 import androidx.compose.material3.Button
@@ -44,8 +33,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -56,15 +43,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -75,17 +58,12 @@ import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDirection
-import androidx.compose.ui.text.style.TextMotion
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
-import coil.compose.ImagePainter
 import com.aslansoft.caffesist.R
 import com.aslansoft.caffesist.ui.theme.Purple40
-import com.aslansoft.caffesist.ui.theme.Purple80
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.auth
@@ -156,6 +134,7 @@ fun RegisterScreen(navController: NavHostController) {
                     focusedTextColor = Color.Black,
                     unfocusedTextColor = Color.Black
                 ),
+                textStyle = TextStyle(lineHeight = 10.sp)
             )
 
             Spacer(modifier = Modifier.padding(vertical = 5.dp))
@@ -193,7 +172,8 @@ fun RegisterScreen(navController: NavHostController) {
                         contentDescription = "",
                         tint = Color.Black
                     )
-                })
+                },
+                textStyle = TextStyle(lineHeight = 10.sp))
 
 
             Spacer(modifier = Modifier.padding(vertical = 5.dp))
@@ -239,7 +219,8 @@ fun RegisterScreen(navController: NavHostController) {
                     focusedTextColor = Color.Black,
                     unfocusedTextColor = Color.Black
                 ),
-                singleLine = true
+                singleLine = true,
+                textStyle = TextStyle(lineHeight = 10.sp)
             )
             Spacer(modifier = Modifier.padding(vertical = 5.dp))
             val hidePassword = remember { mutableStateOf(true) }
@@ -283,7 +264,8 @@ fun RegisterScreen(navController: NavHostController) {
                             Icon(imageVector = EyeOpen, contentDescription = "", tint = Color.Black)
                         }
                     }
-                })
+                },
+                textStyle = TextStyle(lineHeight = 10.sp))
 
             if (openDialog.value) {
                 DatePickerDialog(
@@ -492,7 +474,8 @@ fun PhoneField(
             unfocusedContainerColor = Color(0x80FFFAFA),
             focusedTextColor = Color.Black,
             unfocusedTextColor = Color.Black
-        )
+        ),
+        textStyle = TextStyle(lineHeight = 10.sp)
     )
 }
 
