@@ -1,11 +1,17 @@
 package com.aslansoft.caffesist.views
 
+import QrCode
 import android.content.pm.PackageManager
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,28 +28,42 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MailOutline
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -76,188 +96,149 @@ fun MainScreen(navController: NavHostController) {
 
     val requestPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) {isGranted ->
-        if (isGranted){
+    ) { isGranted ->
+        if (isGranted) {
             cameraGranted.value = true
             navController.navigate("Camera")
-        }else{
-            Toast.makeText(context,
+        } else {
+            Toast.makeText(
+                context,
                 "Kamera İzni Vermeniz Gerekiyor",
-                Toast.LENGTH_SHORT).show()
+                Toast.LENGTH_SHORT
+            ).show()
         }
 
     }
     Surface {
 
 
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .paint(painterResource(R.drawable.main_bg))) {
-            Row(modifier = Modifier.fillMaxWidth()) {
-                ElevatedCard(modifier = Modifier
-                    .height(200.dp)
-                    .width(250.dp)
-                    .padding(
-                        top = 3.dp,
-                        start = 3.dp
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .paint(painterResource(R.drawable.main_bg), contentScale = ContentScale.Crop, alpha = 1f),
+        ) {
+            CenterAlignedTopAppBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp),
+
+                title = { Text("") },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = Color.Transparent,
+
                     ),
-                    colors = CardDefaults.elevatedCardColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = Color.White
-                    ),
-                    onClick = {   if (!cameraGranted.value){
-                        requestPermissionLauncher.launch(android.Manifest.permission.CAMERA)
-                    }else{
-                        navController.navigate("Camera")
-                    } }) {
-                    Row {
-                        Column(modifier = Modifier
-                            .width(175.dp)
-                            .fillMaxHeight(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
-                            Row {
+                navigationIcon = {
+                    Box(modifier = Modifier.size(40.dp)) {
+                        Icon(
+                            modifier = Modifier.fillMaxSize()
+                                .clickable {
 
-                                Text(text = "Menü", fontSize = 35.sp, fontWeight = FontWeight.Bold)
+                                },
+                            imageVector = Icons.Outlined.Menu,
+                            contentDescription = "",
+                            tint = Color.White
+                        )
 
-                            }
-                            Spacer(modifier = Modifier.padding(vertical = 5.dp))
-                            Row {
-                                Spacer(modifier = Modifier.padding(horizontal = 5.dp))
-                                Text(text = "Menüye erişmek için qr kod okutun", )
-
-                            }
-
-                        }
-                        Column(modifier = Modifier
-                            .width(70.dp)
-                            .fillMaxHeight(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-                            Icon(modifier = Modifier
-                                .fillMaxSize()
-                                ,imageVector = ImageVector.vectorResource(id = R.drawable.qr_code_24px), contentDescription = null)
-                        }
                     }
 
 
+                },
+                actions = {
+                    Box(Modifier.size(45.dp)) {
+                        Image(
+                            modifier = Modifier.fillMaxSize()
+                                .clickable {
 
-                }
-                Spacer(modifier = Modifier.padding(horizontal = 2.dp))
-                Column {
-                    ElevatedCard(modifier = Modifier
-                        .fillMaxWidth()
-                        .size(50.dp)
-                        .padding(top = 3.dp, end = 3.dp), colors = CardDefaults.elevatedCardColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = Color.White
-                    ), onClick = {/*TODO*/}){
-                        Row(modifier = Modifier.fillMaxSize(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-                            Icon(imageVector = Icons.Outlined.Settings, contentDescription = null)
-                            Text(text = "Ayarlar")
-                        }
-
+                                },
+                            painter = painterResource(R.drawable.caffesist_logo_bg_buyuk),
+                            contentDescription = "",
+                            contentScale = ContentScale.Crop
+                        )
                     }
-                    Spacer(modifier = Modifier.padding(vertical = 10.dp))
-                    ElevatedCard(modifier = Modifier
-                        .fillMaxWidth()
-                        .size(50.dp)
-                        .padding(top = 3.dp, end = 3.dp), colors = CardDefaults.elevatedCardColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = Color.White
-                    ),
-                        onClick = {navController.navigate("history")}){
-                        Row (modifier = Modifier.fillMaxSize(),horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically){
-                            Icon(imageVector = Icons.Outlined.DateRange, contentDescription = null)
-                            Text(text = "Geçmiş")
-                        }
-                    }
-                    Spacer(modifier = Modifier.padding(vertical = 10.dp))
-                    ElevatedCard(modifier = Modifier
-                        .fillMaxWidth()
-                        .size(50.dp)
-                        .padding(top = 3.dp, end = 3.dp), colors = CardDefaults.elevatedCardColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = Color.White,
-                    ),
-                        onClick = {auth.signOut()
-                        navController.navigate("login_screen")}){
-                        Row (modifier = Modifier.fillMaxSize(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically){
-                            Icon(imageVector = ImageVector.vectorResource(id = R.drawable.logout_24px), contentDescription = "")
-                            Text(text = "Çıkış Yap")    
-                        }
-                        
-                    }
-
-                }
-
-            }
-            val samplePhotos = listOf(
-                R.drawable.sayfa_1,
-                R.drawable.sayfa_2,
-                R.drawable.sayfa_3,
-                R.drawable.sayfa_4,
+                },
             )
-            val pagerState = com.google.accompanist.pager.rememberPagerState()
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.3f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Card(
+                    modifier = Modifier
+                        .width(96.dp)
+                        .height(34.dp), shape = CircleShape,
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(183, 137, 64),
+                        contentColor = Color.Black
+                    )
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text("MENÜ", fontSize = 20.sp)
 
-            Spacer(modifier = Modifier.padding(vertical = 3.dp))
-            ElevatedCard(modifier = Modifier
-                .fillMaxWidth()
-                .height(400.dp)
-                .padding(start = 3.dp, end = 3.dp),
-                colors = CardDefaults.elevatedCardColors(
-                    contentColor = Color.White,
-                    containerColor = MaterialTheme.colorScheme.primary
-                )) {
-             PhotoMenu(photoList = samplePhotos, pagerState = pagerState)
-            }
-            Spacer(modifier = Modifier.padding(vertical = 3.dp))
-
-            ElevatedCard(modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .padding(start = 3.dp, end = 3.dp),
-                onClick = { /*TODO*/ },
-                colors = CardDefaults.elevatedCardColors(
-                    contentColor = Color.White,
-                    containerColor = MaterialTheme.colorScheme.primary
-                )) {
-                Column(modifier = Modifier.fillMaxSize()) {
-                    Row(modifier = Modifier.padding(top = 3.dp, start = 3.dp).fillMaxWidth().height(50.dp)) {
-                        Text(text = "Yaklaşan Etkinlikler")
-                    }
-                    Column(modifier = Modifier.fillMaxSize(),verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally){
-                        Text(text = "Yaklaşan Etkinlik Bulunmamakta", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                     }
                 }
+                Spacer(Modifier.padding(vertical = 10.dp))
+                Box(
+                    modifier = Modifier
+                        .width(200.dp)
+                        .height(200.dp)
+                ) {
 
 
+                    androidx.compose.material.Icon(
+                        modifier = Modifier
+                            .border(1.dp, Color.Black, RoundedCornerShape(9.dp))
+                            .clickable {
+                                if (!cameraGranted.value) {
+                                    requestPermissionLauncher.launch(android.Manifest.permission.CAMERA)
+                                } else {
+                                    navController.navigate("Camera")
+                                }
+                            }
+                            .fillMaxSize()
+                            .background(color = Color.White, shape = RoundedCornerShape(9.dp))
+                            .padding(10.dp),
+                        imageVector = QrCode,
+                        contentDescription = null,
+                        tint = Color.Black
+
+                    )
+
+                }
+
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(bottom = 10.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.Bottom,
+            ) {
+                Text("COFFEE MEETING", fontSize = 44.sp, fontWeight = FontWeight.Bold, color = Color(183, 137, 64,
+                    0x000000d2
+                ))
             }
 
         }
 
     }
-
-
-
 }
 
 
-@OptIn(ExperimentalPagerApi::class)
-@Composable
-fun PhotoMenu(photoList: List<Int>,pagerState: com.google.accompanist.pager.PagerState) {
-    val currentPage = remember {
-        mutableStateOf(0)
-    }
-    val changeInterval = 3000L
-    LaunchedEffect(Unit) {
-        while (true){
-            delay(changeInterval)
-            currentPage.value = (currentPage.value + 1) % photoList.size
-            pagerState.animateScrollToPage(currentPage.value)
-        }
-    }
-    com.google.accompanist.pager.HorizontalPager(modifier = Modifier
-        .fillMaxSize()
-        .clip(shape = RoundedCornerShape(30.dp)),state = pagerState,count = photoList.size) { photo ->
-        Image(modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 2.dp, end = 2.dp),painter = painterResource(id = photoList[photo]), contentDescription ="" )
-    }
-}
+//qr menu
+/*
+
+ */
+
+
+//menu button
+/*
+
+ */
