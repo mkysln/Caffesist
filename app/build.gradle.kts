@@ -51,7 +51,6 @@ android {
 }
 
 dependencies {
-
     val accompanVer = "0.35.1-alpha"
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

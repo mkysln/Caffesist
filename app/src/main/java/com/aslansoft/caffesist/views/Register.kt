@@ -91,6 +91,8 @@ fun RegisterScreen(navController: NavHostController) {
     val auth = Firebase.auth
     val db = Firebase.firestore
     val context = LocalContext.current
+    val maxChar = 8
+    val error = remember { mutableStateOf(false) }
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -191,9 +193,23 @@ fun RegisterScreen(navController: NavHostController) {
                     .height(50.dp),
                 value = userBirthDate.value,
                 onValueChange = {
-                    userBirthDate.value = it
+                    if (it.length <= maxChar) {
+                        userBirthDate.value = it
+                    }
+                    if (userBirthDate.value.isNotEmpty() && userBirthDate.value.length >= 8) {
+                        val day = userBirthDate.value.substring(0, 2).toIntOrNull()
+                        val month = userBirthDate.value.substring(2, 4).toIntOrNull()
+                        if (day != null && month != null) {
+                            error.value = !(day in 1..31 && month in 1..12)
+                        } else {
+                            error.value = false
+                        }
+                        if (userBirthDate.value.isEmpty()) {
+                            error.value = true
+                        }
+                    }
                 },
-                readOnly = true,
+
                 trailingIcon = {
                     Icon(
                         modifier = Modifier.clickable { openDialog.value = true },
@@ -437,7 +453,6 @@ fun RegisterScreen(navController: NavHostController) {
 @Composable
 fun PhoneField(
     phone: String,
-    modifier: Modifier = Modifier,
     mask: String = "000 000 00 00",
     maskNumber: Char = '0',
     onPhoneChanged: (String) -> Unit
