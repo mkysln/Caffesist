@@ -57,8 +57,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.paint
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -83,8 +87,7 @@ fun MainScreen(navController: NavHostController) {
     val cameraGranted = remember {
         mutableStateOf(
             ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.CAMERA
+                context, Manifest.permission.CAMERA
             ) == PackageManager.PERMISSION_GRANTED
         )
     }
@@ -97,9 +100,7 @@ fun MainScreen(navController: NavHostController) {
             navController.navigate("Camera")
         } else {
             Toast.makeText(
-                context,
-                "Kamera İzni Vermeniz Gerekiyor",
-                Toast.LENGTH_SHORT
+                context, "Kamera İzni Vermeniz Gerekiyor", Toast.LENGTH_SHORT
             ).show()
         }
 
@@ -110,8 +111,7 @@ fun MainScreen(navController: NavHostController) {
         drawerState = sideBarState,
         drawerContent = {
             ModalDrawerSheet(
-                drawerContainerColor = Color(80, 8, 12),
-                drawerContentColor = Color(183, 137, 64)
+                drawerContainerColor = Color(80, 8, 12), drawerContentColor = Color(183, 137, 64)
             ) {
                 Column(
                     modifier = Modifier
@@ -139,8 +139,7 @@ fun MainScreen(navController: NavHostController) {
                     NavigationDrawerItem(
                         icon = {
                             Icon(
-                                imageVector = Icons.Default.DateRange,
-                                contentDescription = ""
+                                imageVector = Icons.Default.DateRange, contentDescription = ""
                             )
                         },
                         label = { Text("Geçmiş", color = Color(183, 137, 64)) },
@@ -154,7 +153,12 @@ fun MainScreen(navController: NavHostController) {
                         )
                     )
                     NavigationDrawerItem(
-                        icon = { Icon(imageVector = Campaign, contentDescription = "") },
+                        icon = {
+                            Icon(
+                                imageVector = Campaign,
+                                contentDescription = ""
+                            )
+                        },
                         label = { Text("Kampanyalar", color = Color(183, 137, 64)) },
                         selected = false,
                         onClick = { /* Handle click */ },
@@ -168,8 +172,7 @@ fun MainScreen(navController: NavHostController) {
                     )
 
                     Divider(
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        color = Color(183, 137, 64)
+                        modifier = Modifier.padding(vertical = 8.dp), color = Color(183, 137, 64)
                     )
 
                     Text(
@@ -208,18 +211,25 @@ fun MainScreen(navController: NavHostController) {
                         )
                     )
                     Divider(
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        color = Color(183, 137, 64)
+                        modifier = Modifier.padding(vertical = 8.dp), color = Color(183, 137, 64)
                     )
                     Spacer(Modifier.padding(vertical = 10.dp))
-                    Row(Modifier.fillMaxWidth()
-                        .clickable {
-                            Firebase.auth.signOut()
-                            navController.navigate("login_screen")
-                        }, horizontalArrangement = Arrangement.Center) {
-                        Icon(imageVector = ImageVector.vectorResource(R.drawable.logout_24px), contentDescription = "", tint = Color.White)
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                Firebase.auth.signOut()
+                                navController.navigate("login_screen")
+                            }, horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.logout_24px),
+                            contentDescription = "",
+                            tint = Color.White
+                        )
                         Spacer(modifier = Modifier.padding(horizontal = 5.dp))
-                        Text("Çıkış Yap", color = Color.White) }
+                        Text("Çıkış Yap", color = Color.White)
+                    }
                     Spacer(Modifier.height(12.dp))
                 }
             }
@@ -296,10 +306,10 @@ fun MainScreen(navController: NavHostController) {
                         Card(
                             modifier = Modifier
                                 .width(96.dp)
-                                .height(34.dp), shape = CircleShape,
+                                .height(34.dp),
+                            shape = CircleShape,
                             colors = CardDefaults.cardColors(
-                                containerColor = Color(183, 137, 64),
-                                contentColor = Color.Black
+                                containerColor = Color(183, 137, 64), contentColor = Color.Black
                             )
                         ) {
                             Row(
@@ -314,27 +324,93 @@ fun MainScreen(navController: NavHostController) {
                         Spacer(Modifier.padding(vertical = 10.dp))
                         Box(
                             modifier = Modifier
-                                .width(200.dp)
-                                .height(200.dp)
+                                .size(180.dp)
+
+                                .drawBehind {
+                                    val cornerSize = 20.dp.toPx() // Köşe uzunluğu
+                                    val strokeWidth = 10.dp.toPx() // Çizgi kalınlığı
+
+                                    // Sol üst
+                                    drawLine(
+                                        color = Color.Black,
+                                        start = Offset(0f, 0f),
+                                        end = Offset(cornerSize, 0f),
+                                        strokeWidth = strokeWidth,
+                                        cap = StrokeCap.Square
+                                    )
+                                    drawLine(
+                                        color = Color.Black,
+                                        start = Offset(0f, 0f),
+                                        end = Offset(0f, cornerSize),
+                                        strokeWidth = strokeWidth,
+                                        cap = StrokeCap.Square
+                                    )
+
+                                    // Sağ üst
+                                    drawLine(
+                                        color = Color.Black,
+                                        start = Offset(size.width, 0f),
+                                        end = Offset(size.width - cornerSize, 0f),
+                                        strokeWidth = strokeWidth,
+                                        cap = StrokeCap.Square
+                                    )
+                                    drawLine(
+                                        color = Color.Black,
+                                        start = Offset(size.width, 0f),
+                                        end = Offset(size.width, cornerSize),
+                                        strokeWidth = strokeWidth,
+                                        cap = StrokeCap.Square
+                                    )
+
+                                    // Sol alt
+                                    drawLine(
+                                        color = Color.Black,
+                                        start = Offset(0f, size.height),
+                                        end = Offset(0f, size.height - cornerSize),
+                                        strokeWidth = strokeWidth,
+                                        cap = StrokeCap.Square
+                                    )
+                                    drawLine(
+                                        color = Color.Black,
+                                        start = Offset(0f, size.height),
+                                        end = Offset(cornerSize, size.height),
+                                        strokeWidth = strokeWidth,
+                                        cap = StrokeCap.Square
+                                    )
+
+                                    // Sağ alt
+                                    drawLine(
+                                        color = Color.Black,
+                                        start = Offset(size.width, size.height),
+                                        end = Offset(size.width - cornerSize, size.height),
+                                        strokeWidth = strokeWidth,
+                                        cap = StrokeCap.Square
+                                    )
+                                    drawLine(
+                                        color = Color.Black,
+                                        start = Offset(size.width, size.height),
+                                        end = Offset(size.width, size.height - cornerSize),
+                                        strokeWidth = strokeWidth,
+                                        cap = StrokeCap.Square
+                                    )
+                                }
                         ) {
 
 
-                            androidx.compose.material.Icon(
-                                modifier = Modifier
-                                    .border(1.dp, Color.Black, RoundedCornerShape(9.dp))
-                                    .clickable {
-                                        if (!cameraGranted.value) {
-                                            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
-                                        } else {
-                                            navController.navigate("Camera")
-                                        }
+                            androidx.compose.material.Icon(modifier = Modifier
+
+                                .clickable {
+                                    if (!cameraGranted.value) {
+                                        requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+                                    } else {
+                                        navController.navigate("Camera")
                                     }
-                                    .fillMaxSize()
-                                    .background(
-                                        color = Color.White,
-                                        shape = RoundedCornerShape(9.dp)
-                                    )
-                                    .padding(10.dp),
+                                }
+                                .fillMaxSize()
+                                .background(
+                                    color = Color.White
+                                )
+                                .padding(10.dp),
                                 imageVector = QrCode,
                                 contentDescription = null,
                                 tint = Color.Black
@@ -358,8 +434,7 @@ fun MainScreen(navController: NavHostController) {
                             fontSize = 44.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color(
-                                183, 137, 64,
-                                0x000000d2
+                                183, 137, 64, 0x000000d2
                             )
                         )
                     }
@@ -367,9 +442,9 @@ fun MainScreen(navController: NavHostController) {
 
             }
         }
-    BackHandler(true) {
-        (context as? ComponentActivity)?.finish()
-    }
+        BackHandler(true) {
+            (context as? ComponentActivity)?.finish()
+        }
 
     }
 }
