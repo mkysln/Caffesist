@@ -5,6 +5,8 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -27,7 +29,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Badge
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -45,7 +46,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.NavigationDrawerItemColors
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -59,9 +59,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -69,6 +71,8 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import com.aslansoft.caffesist.R
 import com.aslansoft.caffesist.icons.Campaign
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -105,8 +109,10 @@ fun MainScreen(navController: NavHostController) {
     ModalNavigationDrawer(
         drawerState = sideBarState,
         drawerContent = {
-            ModalDrawerSheet(drawerContainerColor = Color(80, 8, 12),
-                drawerContentColor = Color(183, 137, 64)) {
+            ModalDrawerSheet(
+                drawerContainerColor = Color(80, 8, 12),
+                drawerContentColor = Color(183, 137, 64)
+            ) {
                 Column(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
@@ -131,7 +137,12 @@ fun MainScreen(navController: NavHostController) {
                         color = Color(183, 137, 64)
                     )
                     NavigationDrawerItem(
-                        icon = { Icon(imageVector = Icons.Default.DateRange, contentDescription = "") },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.DateRange,
+                                contentDescription = ""
+                            )
+                        },
                         label = { Text("Geçmiş", color = Color(183, 137, 64)) },
                         selected = false,
                         onClick = { /* Handle click */ },
@@ -152,10 +163,14 @@ fun MainScreen(navController: NavHostController) {
                             unselectedContainerColor = Color.Transparent,
                             selectedIconColor = Color(183, 137, 64),
                             unselectedIconColor = Color(183, 137, 64)
+
                         )
                     )
 
-                    Divider(modifier = Modifier.padding(vertical = 8.dp), color = Color(183, 137, 64))
+                    Divider(
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        color = Color(183, 137, 64)
+                    )
 
                     Text(
                         "Ayarlar",
@@ -192,6 +207,19 @@ fun MainScreen(navController: NavHostController) {
                             selectedTextColor = Color(183, 137, 64)
                         )
                     )
+                    Divider(
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        color = Color(183, 137, 64)
+                    )
+                    Spacer(Modifier.padding(vertical = 10.dp))
+                    Row(Modifier.fillMaxWidth()
+                        .clickable {
+                            Firebase.auth.signOut()
+                            navController.navigate("login_screen")
+                        }, horizontalArrangement = Arrangement.Center) {
+                        Icon(imageVector = ImageVector.vectorResource(R.drawable.logout_24px), contentDescription = "", tint = Color.White)
+                        Spacer(modifier = Modifier.padding(horizontal = 5.dp))
+                        Text("Çıkış Yap", color = Color.White) }
                     Spacer(Modifier.height(12.dp))
                 }
             }
@@ -339,7 +367,9 @@ fun MainScreen(navController: NavHostController) {
 
             }
         }
-
+    BackHandler(true) {
+        (context as? ComponentActivity)?.finish()
+    }
 
     }
 }
