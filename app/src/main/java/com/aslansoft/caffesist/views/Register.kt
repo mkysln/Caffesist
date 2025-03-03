@@ -22,22 +22,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.outlined.Call
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDefaults
-import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,17 +53,15 @@ import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
 import com.aslansoft.caffesist.R
+import com.aslansoft.caffesist.fonts.IBMPlexSans
 import com.aslansoft.caffesist.ui.theme.Purple40
 import com.google.firebase.Firebase
-import com.google.firebase.Timestamp
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import java.util.Calendar
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(navController: NavHostController) {
     val userName = remember { mutableStateOf("") }
@@ -87,7 +78,6 @@ fun RegisterScreen(navController: NavHostController) {
     val openDialog = remember {
         mutableStateOf(false)
     }
-    val datePickerState = rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
     val auth = Firebase.auth
     val db = Firebase.firestore
     val context = LocalContext.current
@@ -120,7 +110,7 @@ fun RegisterScreen(navController: NavHostController) {
                 },
                 singleLine = true,
                 label = {
-                    Text("Ad Soyad:")
+                    Text("Ad Soyad:", fontFamily = IBMPlexSans, fontWeight = FontWeight.Bold)
                 },
                 colors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Transparent,
@@ -136,7 +126,8 @@ fun RegisterScreen(navController: NavHostController) {
                     focusedTextColor = Color.Black,
                     unfocusedTextColor = Color.Black
                 ),
-                textStyle = TextStyle(lineHeight = 10.sp)
+                textStyle = TextStyle(lineHeight = 10.sp
+                , fontFamily = IBMPlexSans)
             )
 
             Spacer(modifier = Modifier.padding(vertical = 5.dp))
@@ -153,7 +144,7 @@ fun RegisterScreen(navController: NavHostController) {
 
                 },
                 singleLine = true,
-                label = { Text("E-Posta:") },
+                label = { Text("E-Posta:", fontFamily = IBMPlexSans, fontWeight = FontWeight.Bold) },
                 colors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
@@ -219,7 +210,7 @@ fun RegisterScreen(navController: NavHostController) {
                     )
                 },
                 label = {
-                    Text(text = "Doğum Tarihi")
+                    Text(text = "Doğum Tarihi", fontWeight = FontWeight.Bold, fontFamily = IBMPlexSans)
                 },
                 colors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Transparent,
@@ -236,7 +227,8 @@ fun RegisterScreen(navController: NavHostController) {
                     unfocusedTextColor = Color.Black
                 ),
                 singleLine = true,
-                textStyle = TextStyle(lineHeight = 10.sp)
+                textStyle = TextStyle(lineHeight = 10.sp
+                , fontFamily = IBMPlexSans)
             )
             Spacer(modifier = Modifier.padding(vertical = 5.dp))
             val hidePassword = remember { mutableStateOf(true) }
@@ -251,7 +243,7 @@ fun RegisterScreen(navController: NavHostController) {
 
                 },
                 singleLine = true,
-                label = { Text("Parola") },
+                label = { Text("Parola", fontFamily = IBMPlexSans, fontWeight = FontWeight.Bold) },
                 colors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
@@ -282,47 +274,6 @@ fun RegisterScreen(navController: NavHostController) {
                     }
                 },
                 textStyle = TextStyle(lineHeight = 10.sp))
-
-            if (openDialog.value) {
-                DatePickerDialog(
-                    onDismissRequest = {
-                        openDialog.value
-                    }, colors = DatePickerDefaults.colors(
-                        containerColor = MaterialTheme.colorScheme.background,
-                        dayContentColor = Color.White,
-                        weekdayContentColor = MaterialTheme.colorScheme.primary,
-                        subheadContentColor = MaterialTheme.colorScheme.primary
-                    ), confirmButton = {
-                        Button(onClick = {
-                            val selectedMills = datePickerState.selectedDateMillis
-                            if (selectedMills != null) {
-                                val calendar = Calendar.getInstance().apply {
-                                    timeInMillis = selectedMills
-                                }
-                                userBirthDate.value =
-                                    "${calendar.get(Calendar.DAY_OF_MONTH)}.${calendar.get(Calendar.MONTH) + 1}.${
-                                        calendar.get(Calendar.YEAR)
-                                    }"
-                                val timestamp = Timestamp(calendar.time)
-                                println(timestamp)
-                            }
-                            openDialog.value = false
-                        }) {
-                            Text(text = "Onayla")
-                        }
-                    }, properties = DialogProperties(usePlatformDefaultWidth = true)
-                ) {
-                    DatePicker(state = datePickerState, colors = DatePickerDefaults.colors(
-                        containerColor = MaterialTheme.colorScheme.background
-                    ), title = {
-                        Text(
-                            modifier = Modifier.padding(start = 15.dp, top = 5.dp),
-                            text = "Doğum Tarihi"
-                        )
-                    })
-
-                }
-            }
             Spacer(modifier = Modifier.padding(vertical = 35.dp))
             ElevatedButton(
                 modifier = Modifier
@@ -443,7 +394,7 @@ fun RegisterScreen(navController: NavHostController) {
                     defaultElevation = 10.dp, focusedElevation = 30.dp, hoveredElevation = 35.dp
                 )
             ) {
-                Text(text = "Kayıt Ol", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Text(text = "Kayıt Ol", fontSize = 18.sp, fontWeight = FontWeight.Bold, fontFamily = IBMPlexSans)
             }
         }
     }
@@ -466,7 +417,7 @@ fun PhoneField(
             onPhoneChanged(it.take(mask.count { it == maskNumber }))
         },
         label = {
-            Text(text = "Telefon No:")
+            Text(text = "Telefon No:", fontWeight = FontWeight.Bold, fontFamily = IBMPlexSans)
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
         visualTransformation = PhoneVisualTransformation(mask, maskNumber),
@@ -490,7 +441,8 @@ fun PhoneField(
             focusedTextColor = Color.Black,
             unfocusedTextColor = Color.Black
         ),
-        textStyle = TextStyle(lineHeight = 10.sp)
+        textStyle = TextStyle(lineHeight = 10.sp
+        , fontFamily = IBMPlexSans)
     )
 }
 

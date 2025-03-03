@@ -55,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.aslansoft.caffesist.R
+import com.aslansoft.caffesist.fonts.IBMPlexSans
 import com.aslansoft.caffesist.ui.theme.Purple40
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
@@ -106,7 +107,7 @@ fun Login(navController: NavHostController) {
                     email.value = it
                 },
                 label = {
-                    Text(text = "Email:")
+                    Text(text = "Email:", fontFamily = IBMPlexSans, fontWeight = FontWeight.Bold)
                 },
                 singleLine = true,
                 keyboardActions = KeyboardActions.Default,
@@ -125,8 +126,10 @@ fun Login(navController: NavHostController) {
                     focusedTextColor = Color.Black,
                     unfocusedTextColor = Color.Black
                 ), textStyle = TextStyle(
-                    lineHeight = 10.sp
+                    lineHeight = 10.sp,
+                    fontFamily = IBMPlexSans
                 )
+
             )
 
             Spacer(modifier = Modifier.padding(vertical = 10.dp))
@@ -140,7 +143,7 @@ fun Login(navController: NavHostController) {
                     password.value = it
                 },
                 label = {
-                    Text(text = "Parola:")
+                    Text(text = "Parola:", fontFamily = IBMPlexSans, fontWeight = FontWeight.Bold)
                 },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -159,7 +162,8 @@ fun Login(navController: NavHostController) {
                     focusedTextColor = Color.Black,
                     unfocusedTextColor = Color.Black
                 ), textStyle = TextStyle(
-                    lineHeight = 10.sp
+                    lineHeight = 10.sp,
+                    fontFamily = IBMPlexSans
                 )
             )
             Spacer(modifier = Modifier.padding(vertical = 10.dp))
@@ -202,12 +206,12 @@ fun Login(navController: NavHostController) {
                     containerColor = Purple40, contentColor = Color.White
                 )
             ) {
-                Text(text = "Giriş Yap", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                Text(text = "Giriş Yap", fontWeight = FontWeight.Bold, fontSize = 18.sp, fontFamily = IBMPlexSans)
             }
 
             Spacer(modifier = Modifier.padding(vertical = 15.dp))
 
-            Text(text = "Hesabın Yok Mu?", color = Color.White, fontWeight = FontWeight.Bold)
+            Text(text = "Hesabın Yok Mu?", color = Color.White, fontWeight = FontWeight.Bold, fontFamily = IBMPlexSans)
             Spacer(Modifier.padding(vertical = 5.dp))
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
 
@@ -220,7 +224,8 @@ fun Login(navController: NavHostController) {
                     text = "Kayıt Ol",
                     color = Color(248, 213, 100, 233),
                     fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp
+                    fontSize = 20.sp,
+                    fontFamily = IBMPlexSans
                 )
 
             }

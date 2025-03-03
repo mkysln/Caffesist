@@ -74,6 +74,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import com.aslansoft.caffesist.R
+import com.aslansoft.caffesist.fonts.Economica
 import com.aslansoft.caffesist.icons.Campaign
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
@@ -317,7 +318,7 @@ fun MainScreen(navController: NavHostController) {
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.Center
                             ) {
-                                Text("MENÜ", fontSize = 20.sp)
+                                Text("MENÜ", fontSize = 20.sp, fontFamily = Economica)
 
                             }
                         }
