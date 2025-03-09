@@ -39,3 +39,21 @@ val IBMPlexSans = FontFamily(
        )
     )
 )
+
+val Moderna = FontFamily(
+    fonts = listOf(
+        Font(resId = R.font.moderna_thin,
+            weight = FontWeight.Thin,
+            style = FontStyle.Normal),
+        Font(resId = R.font.moderna_light,
+            weight = FontWeight.Light,
+            style = FontStyle.Normal),
+        Font(resId = R.font.moderna_regular,
+            weight = FontWeight.Normal,
+            style = FontStyle.Normal),
+        Font(resId = R.font.moderna_extralight,
+            weight = FontWeight.ExtraLight,
+            style = FontStyle.Normal
+       )
+    )
+)

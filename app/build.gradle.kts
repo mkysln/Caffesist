@@ -115,13 +115,18 @@ dependencies {
     //noinspection UseTomlInstead
     implementation ("com.google.accompanist:accompanist-systemuicontroller:$accompanVer")
     //firebase auth
+    //noinspection UseTomlInstead
     implementation("com.google.firebase:firebase-auth")
     //Pager
+    //noinspection UseTomlInstead
     implementation ("com.google.accompanist:accompanist-pager:0.19.0")
 
     // If using indicators, also depend on
+    //noinspection UseTomlInstead
     implementation ("com.google.accompanist:accompanist-pager-indicators:0.19.0")
-
+    // En güncel versiyonu kontrol edebilirsiniz.
+    //noinspection UseTomlInstead
+    implementation("androidx.compose.ui:ui-text-google-fonts:1.7.8")
 
 
 

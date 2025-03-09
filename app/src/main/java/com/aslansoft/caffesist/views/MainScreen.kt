@@ -68,6 +68,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -75,6 +76,8 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import com.aslansoft.caffesist.R
 import com.aslansoft.caffesist.fonts.Economica
+import com.aslansoft.caffesist.fonts.IBMPlexSans
+import com.aslansoft.caffesist.fonts.Moderna
 import com.aslansoft.caffesist.icons.Campaign
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
@@ -122,7 +125,7 @@ fun MainScreen(navController: NavHostController) {
                 ) {
                     Spacer(Modifier.height(12.dp))
                     Text(
-                        "Coffe Meeting",
+                        "Coffee Meeting",
                         modifier = Modifier.padding(16.dp),
                         fontSize = 19.sp,
                         fontWeight = FontWeight.Bold,
@@ -145,7 +148,7 @@ fun MainScreen(navController: NavHostController) {
                         },
                         label = { Text("Geçmiş", color = Color(183, 137, 64)) },
                         selected = false,
-                        onClick = { /* Handle click */ },
+                        onClick = { navController.navigate("history") },
                         colors = NavigationDrawerItemDefaults.colors(
                             selectedContainerColor = Color.Transparent,
                             unselectedContainerColor = Color.Transparent,
@@ -162,7 +165,7 @@ fun MainScreen(navController: NavHostController) {
                         },
                         label = { Text("Kampanyalar", color = Color(183, 137, 64)) },
                         selected = false,
-                        onClick = { /* Handle click */ },
+                        onClick = {  },
                         colors = NavigationDrawerItemDefaults.colors(
                             selectedContainerColor = Color.Transparent,
                             unselectedContainerColor = Color.Transparent,
@@ -431,8 +434,9 @@ fun MainScreen(navController: NavHostController) {
                         verticalAlignment = Alignment.Bottom,
                     ) {
                         Text(
-                            "COFFEE MEETING",
-                            fontSize = 44.sp,
+                            "Coffee Meeting",
+                            fontSize = 40.sp,
+                            fontFamily = Moderna,
                             fontWeight = FontWeight.Bold,
                             color = Color(
                                 183, 137, 64, 0x000000d2

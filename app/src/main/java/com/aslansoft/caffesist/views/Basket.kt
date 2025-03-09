@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.aslansoft.caffesist.classes.CardField
@@ -28,7 +29,9 @@ fun BasketScreen(navController: NavHostController, totalPrice: String?, orderId:
     val context = LocalContext.current
     Surface(modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background) {
-        Column(modifier = Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
 
             CardField(cardNo) {
                 cardNo = it
@@ -91,3 +94,4 @@ fun BasketScreen(navController: NavHostController, totalPrice: String?, orderId:
         navController.popBackStack()
     }
 }
+
