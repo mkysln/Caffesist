@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material3.Card
@@ -67,8 +68,8 @@ fun BasketScreen(navController: NavHostController, totalPrice: String?, orderId:
                 colors = CardDefaults.cardColors(
                     containerColor = Color(102, 0, 51)
                 ), modifier = Modifier
-                    .fillMaxWidth(0.9f)
-                    .height(150.dp)
+                    .width(360.dp)
+                    .height(200.dp)
             ) {
                 Column {
                     Column(
