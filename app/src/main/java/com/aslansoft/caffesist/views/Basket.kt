@@ -9,6 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
@@ -33,11 +34,26 @@ fun BasketScreen(navController: NavHostController, totalPrice: String?, orderId:
             .fillMaxSize()
             .padding(16.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
 
-            CardField(cardNo) {
-                cardNo = it
+            Card(colors = CardDefaults.cardColors(
+                containerColor = Color.Red
+            ), modifier = Modifier.fillMaxWidth(0.9f).height(150.dp)) {
+                Column {
+                    CardField(cardNo) {
+                        cardNo = it
+                    }
+                }
             }
-            Spacer(Modifier.padding(vertical = 5.dp))
-            Row(modifier = Modifier.fillMaxWidth(0.7f),horizontalArrangement = Arrangement.SpaceBetween){
+
+        }
+    }
+    BackHandler(true) {
+        navController.popBackStack()
+    }
+}
+
+
+//Expiration Date
+/*
                 OutlinedTextField(modifier = Modifier.fillMaxWidth(0.4f),onValueChange = { newValue ->
                     var text = newValue.text
                     var selectionIndex = newValue.selection.end
@@ -65,16 +81,21 @@ fun BasketScreen(navController: NavHostController, totalPrice: String?, orderId:
                 }, value = cardExp,
                     label = {Text("SKT:")},
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
+ */
 
 
+//CVV
+/*
                 OutlinedTextField(modifier = Modifier.fillMaxWidth(0.8f),value = cvv, onValueChange = {
                     if(cvv.length < 3){
                         cvv = it
                     }
                 }, label = { Text("CVV:") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
-            }
-            Spacer(Modifier.padding(vertical = 10.dp))
+ */
+
+/*
+ödeme butonu
             ElevatedButton(onClick = {
                 db.collection("orders").document(orderId!!).update("payTo",true).addOnSuccessListener {
                     Toast.makeText(context,"Ödeme Başarılı",Toast.LENGTH_LONG).show()
@@ -88,10 +109,4 @@ fun BasketScreen(navController: NavHostController, totalPrice: String?, orderId:
             )) {
                 Text("Ödemeyi\nTamamla")
             }
-        }
-    }
-    BackHandler(true) {
-        navController.popBackStack()
-    }
-}
-
+ */

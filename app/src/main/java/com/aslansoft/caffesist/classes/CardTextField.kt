@@ -1,5 +1,6 @@
 package com.aslansoft.caffesist.classes
 
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Call
@@ -7,8 +8,11 @@ import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
@@ -24,18 +28,23 @@ fun CardField(
     maskNumber: Char = '0',
     onCardNoChanged: (String) -> Unit
 ) {
-    OutlinedTextField(
+    TextField(
         value = cardNumber,
         onValueChange = { it ->
             onCardNoChanged(it.take(mask.count { it == maskNumber }))
         },
-        label = {
+        placeholder = {
             Text(text = "Kart No:")
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         visualTransformation = CardVisualTransformation(mask, maskNumber),
         leadingIcon = { Icon(imageVector = Icons.Outlined.Edit, contentDescription = "") },
-        singleLine = true
+        singleLine = true,
+        colors = TextFieldDefaults.colors(
+            errorContainerColor = Color.Transparent,
+            focusedTextColor = Color.Black,
+            focusedPlaceholderColor = Color.Blue
+        )
     )
 }
 
