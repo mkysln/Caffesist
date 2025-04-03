@@ -2,6 +2,8 @@ package com.aslansoft.caffesist.classes
 
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.LocalTextSelectionColors
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Call
 import androidx.compose.material.icons.outlined.Edit
@@ -19,6 +21,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
+import com.aslansoft.caffesist.ui.theme.Pink40
+import com.aslansoft.caffesist.ui.theme.Pink80
 
 @Composable
 fun CardField(
@@ -38,12 +42,22 @@ fun CardField(
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         visualTransformation = CardVisualTransformation(mask, maskNumber),
-        leadingIcon = { Icon(imageVector = Icons.Outlined.Edit, contentDescription = "") },
         singleLine = true,
         colors = TextFieldDefaults.colors(
             errorContainerColor = Color.Transparent,
-            focusedTextColor = Color.Black,
-            focusedPlaceholderColor = Color.Blue
+            focusedTextColor = Color.White,
+            unfocusedPlaceholderColor = Color.White,
+            focusedPlaceholderColor = Color.White,
+            focusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedTextColor = Color.White,
+            selectionColors = TextSelectionColors(
+                handleColor = Pink80,
+                backgroundColor = Pink40
+            ),
+            cursorColor = Color.White
         )
     )
 }
