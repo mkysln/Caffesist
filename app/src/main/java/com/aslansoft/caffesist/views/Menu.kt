@@ -46,16 +46,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.ImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.aslansoft.caffesist.R
+import com.aslansoft.caffesist.ui.theme.Purple40
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
@@ -155,9 +160,10 @@ fun Menu(navController: NavHostController,documentId: String) {
 
     }
 
-    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+    Surface(modifier = Modifier.fillMaxSize(), color = Color(255,128,0)) {
         Column(modifier = Modifier
             .fillMaxSize()
+            .paint(painter = painterResource(R.drawable.main_bg), contentScale = ContentScale.Crop)
            , verticalArrangement = Arrangement.Top, horizontalAlignment = Alignment.CenterHorizontally) {
             Text(text = "Hoşgeldiniz Masa $documentId", color = Color.White, fontSize = 15.sp)
             Row (modifier = Modifier
@@ -179,18 +185,15 @@ fun Menu(navController: NavHostController,documentId: String) {
                                         .height(110.dp)
                                         .padding(start = 4.dp, end = 4.dp),
                                         colors = CardDefaults.elevatedCardColors(
-                                            containerColor = MaterialTheme.colorScheme.primary,
-                                        ), elevation = CardDefaults.elevatedCardElevation(
-                                            defaultElevation = 10.dp,
-                                            pressedElevation = 10.dp,
-                                            focusedElevation = 10.dp
-                                        )) {
+                                            containerColor = Color(192, 192, 192, 190),
+                                        ),
+                                        elevation = CardDefaults.elevatedCardElevation(0.dp)) {
                                         Row(modifier = Modifier
                                             .fillMaxSize()
                                             .padding(start = 4.dp), verticalAlignment = Alignment.CenterVertically) {
                                             Box (modifier = Modifier.size(100.dp), contentAlignment = Alignment.Center){
                                                 if (productData.photo.isNotEmpty()){
-                                                    Image(modifier = Modifier.clip(shape = RoundedCornerShape(3.dp)),painter = painter, contentDescription ="menu photo" )
+                                                    Image(modifier = Modifier.clip(shape = RoundedCornerShape(3.dp)),painter = painter, contentDescription ="menu photo", contentScale = ContentScale.FillHeight )
                                                 }else{
                                                     CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface)
                                                 }
@@ -198,15 +201,15 @@ fun Menu(navController: NavHostController,documentId: String) {
                                             }
                                             Spacer(modifier = Modifier.padding(horizontal = 3.dp))
                                             Column {
-                                                Text(text = productData.name, fontSize = 17.sp, color = Color.White, fontWeight = FontWeight.Bold)
-                                                Text(text = productData.price.toString() + "₺", fontSize = 15.sp, color = Color.White)
+                                                Text(text = productData.name, fontSize = 17.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+                                                Text(text = productData.price.toString() + "₺", fontSize = 15.sp, color = Color.Black)
                                             }
                                             Row (modifier = Modifier.fillMaxSize(), horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically){
                                                 IconButton(onClick = { piece.intValue += 1
                                                                         selectedProducts[productData] = piece.intValue
                                                 println("Added ${productData.name}, Quantity ${piece.intValue}")
                                                 }) {
-                                                    Icon(imageVector = Icons.Default.Add, contentDescription = "", tint = Color.White)
+                                                    Icon(imageVector = Icons.Default.Add, contentDescription = "", tint = Color.Black)
                                                 }
                                                 Text(text = piece.intValue.toString())
                                                 IconButton(onClick = {
@@ -223,10 +226,10 @@ fun Menu(navController: NavHostController,documentId: String) {
                                                 },
                                                     enabled = piece.intValue != 0) {
                                                     if (piece.intValue == 0){
-                                                        Icon(imageVector = ImageVector.vectorResource(id = R.drawable.remove),contentDescription = "", tint = Color.LightGray)
+                                                        Icon(imageVector = ImageVector.vectorResource(id = R.drawable.remove),contentDescription = "", tint = Color.Gray)
 
                                                     }else{
-                                                        Icon(imageVector = ImageVector.vectorResource(id = R.drawable.remove),contentDescription = "", tint = Color.White)
+                                                        Icon(imageVector = ImageVector.vectorResource(id = R.drawable.remove),contentDescription = "", tint = Color.Black)
 
                                                     }
                                                 }
@@ -260,12 +263,12 @@ fun Menu(navController: NavHostController,documentId: String) {
                 println("Surname: ${userSurname.value}")
                 BottomAppBar(modifier = Modifier
                     .padding(start = 3.dp, end = 3.dp)
-                    .clip(RoundedCornerShape(3.dp)),containerColor = MaterialTheme.colorScheme.primary,actions = {
+                    .clip(RoundedCornerShape(3.dp)),containerColor =Color(192, 192, 192, 190) ,actions = {
                     Text(modifier = Modifier.padding(start = 2.dp),text = "Toplam Fiyat: ${totalPrice}₺")
                 }, floatingActionButton = {
                     FloatingActionButton(onClick = {
                         alertState.value = true
-                    }, containerColor = Color(50,0,0)) {
+                    }, containerColor = Purple40, contentColor = Color.White) {
                         Icon(imageVector = ImageVector.vectorResource(id = R.drawable.shopping_basket), contentDescription = null )
                     }
                 })
@@ -276,16 +279,16 @@ fun Menu(navController: NavHostController,documentId: String) {
             AlertDialog(title = {
                 Text(text = "Afiyet Olsun")
             },
-                containerColor = MaterialTheme.colorScheme.background,
-                titleContentColor = Color.White,
-                textContentColor = Color.White,
-                iconContentColor = Color.White,
+                containerColor = Color(192, 192, 192, 190),
+                titleContentColor = Color.Black,
+                textContentColor = Color.Black,
+                iconContentColor = Color.Black,
                 text = {
                 Text(text = "Ödemeyi onaylamak istiyor musunuz?")
             }, dismissButton = {
                 ElevatedButton(onClick = { alertState.value = false},
                     colors = ButtonDefaults.elevatedButtonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
+                        containerColor = Purple40,
                         contentColor = Color.White
                     ) ) {
                     Text(text = "Hayır")
@@ -328,7 +331,7 @@ fun Menu(navController: NavHostController,documentId: String) {
                     alertState.value = false
                 } },
                     colors = ButtonDefaults.elevatedButtonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
+                        containerColor = Purple40,
                         contentColor = Color.White
                     )) {
                     Text(text = "Onayla")
