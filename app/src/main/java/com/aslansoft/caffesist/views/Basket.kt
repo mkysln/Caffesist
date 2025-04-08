@@ -1,6 +1,7 @@
 package com.aslansoft.caffesist.views
 
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -24,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,14 +34,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
 import com.aslansoft.caffesist.R
+import com.aslansoft.caffesist.classes.BinInfo
 import com.aslansoft.caffesist.classes.CardField
+import com.aslansoft.caffesist.classes.loadBinData
 import com.aslansoft.caffesist.ui.theme.Pink40
 import com.aslansoft.caffesist.ui.theme.Pink80
 import com.google.firebase.Firebase
@@ -53,6 +57,11 @@ fun BasketScreen(navController: NavHostController, totalPrice: String?, orderId:
     var cardExp by remember { mutableStateOf(TextFieldValue()) }
     var cvv by remember { mutableStateOf("") }
     val context = LocalContext.current
+    val result = remember { mutableStateOf<BinInfo?>(null) }
+    val binMap = remember { mutableStateOf(loadBinData(context)) }
+    LaunchedEffect(cardNo.length) {
+        result.value = binMap.value[cardNo.take(6)]
+    }
     Surface(
         modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
     ) {
@@ -116,7 +125,7 @@ fun BasketScreen(navController: NavHostController, totalPrice: String?, orderId:
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(1f)
-                            .padding(start = 20.dp,end=4.dp),
+                            .padding(start = 20.dp, end = 4.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
@@ -168,8 +177,35 @@ fun BasketScreen(navController: NavHostController, totalPrice: String?, orderId:
                             )
 
                         )
-                        Image(modifier = Modifier.size(50.dp),painter = painterResource(R.drawable.card), contentDescription = null)
+                        result.value = binMap.value[cardNo]
+                        var model = R.drawable.remove
+                        var cardservice = ""
+
+                        if (cardservice == "mastercard"){
+                                 model = R.drawable.mastercard
+                        }else if (cardservice == "visa"){
+                            model = R.drawable.visa
+                        }else if (cardservice == "troy"){
+                           model = R.drawable.troy
+                        }else{
+                            model = R.drawable.remove
+                        }
+                        val painter = rememberAsyncImagePainter(model = model)
+                        Image(modifier = Modifier.size(50.dp), painter = painter, contentDescription = null)
                     }
+                }
+            }
+            Column(Modifier.border(1.dp,Color.Yellow)) {
+                result.value.let {
+                    Column {
+                        Text(cardNo, color = Color.White)
+                        Text("Marka: ${it?.bin}",color = Color.White)
+                        Text("Tür: ${it?.bankCode}",color = Color.White)
+                        Text("Ülke: ${it?.bankName}",color = Color.White)
+                        Text("Bankanın Web Sitesi: ${it?.type ?: "Yok"}",color = Color.White)
+                        Text("Telefon: ${it?.subType ?: "Yok"}",color = Color.White)
+                    }
+
                 }
             }
 
@@ -179,58 +215,3 @@ fun BasketScreen(navController: NavHostController, totalPrice: String?, orderId:
         navController.popBackStack()
     }
 }
-
-
-//Expiration Date
-/*
-                OutlinedTextField(modifier = Modifier.fillMaxWidth(0.4f),onValueChange = { newValue ->
-                    var text = newValue.text
-                    var selectionIndex = newValue.selection.end
-
-                    if (text.length <= 5) {
-                        if (text.length >= 2 && !text.contains("/")) {
-                            val month = text.substring(0, 2)
-
-                            val monthInt = month.toIntOrNull()
-                            if (monthInt != null && monthInt in 1..12) {
-
-                                text = "$month/${text.substring(2)}"
-                                selectionIndex = 3
-                            } else {
-                                text = text.dropLast(1)
-                                selectionIndex = text.length
-                            }
-                        }
-
-                        cardExp = TextFieldValue(
-                            text = text,
-                            selection = TextRange(selectionIndex)
-                        )
-                    }
-                }, value = cardExp,
-                    label = {Text("SKT:")},
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
- */
-
-
-//CVV
-/*
-
- */
-
-/*
-ödeme butonu
-            ElevatedButton(onClick = {
-                db.collection("orders").document(orderId!!).update("payTo",true).addOnSuccessListener {
-                    Toast.makeText(context,"Ödeme Başarılı",Toast.LENGTH_LONG).show()
-                    navController.popBackStack()
-                }.addOnFailureListener {e ->
-                    Log.e("PayTo","Ödeme Hatası!!",e)
-                }
-            }, colors = ButtonDefaults.elevatedButtonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.surface,
-            )) {
-                Text("Ödemeyi\nTamamla")
-            }
- */

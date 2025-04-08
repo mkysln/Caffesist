@@ -127,7 +127,10 @@ dependencies {
     // En güncel versiyonu kontrol edebilirsiniz.
     //noinspection UseTomlInstead
     implementation("androidx.compose.ui:ui-text-google-fonts:1.7.8")
-
+    implementation("io.ktor:ktor-client-core:2.3.5")
+    implementation("io.ktor:ktor-client-cio:2.3.5") // Android'de CIO client çalışır
+    implementation("io.ktor:ktor-client-content-negotiation:2.3.5")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.5")
 
 
 }
