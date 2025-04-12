@@ -4,7 +4,6 @@ package com.aslansoft.caffesist.views
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,6 +18,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -29,6 +29,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,24 +44,76 @@ import coil.compose.rememberAsyncImagePainter
 import com.aslansoft.caffesist.R
 import com.aslansoft.caffesist.classes.BinInfo
 import com.aslansoft.caffesist.classes.CardField
-import com.aslansoft.caffesist.classes.loadBinData
+import com.aslansoft.caffesist.classes.RetrofitClient
 import com.aslansoft.caffesist.ui.theme.Pink40
 import com.aslansoft.caffesist.ui.theme.Pink80
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.firestore
-
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 @Composable
 fun BasketScreen(navController: NavHostController, totalPrice: String?, orderId: String?) {
-    val db = Firebase.firestore
     var cardNo by remember { mutableStateOf("") }
     var cardExp by remember { mutableStateOf(TextFieldValue()) }
     var cvv by remember { mutableStateOf("") }
+    var binInfo by remember { mutableStateOf<BinInfo?>(null) }
+    var isLoading by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    val result = remember { mutableStateOf<BinInfo?>(null) }
-    val binMap = remember { mutableStateOf(loadBinData(context)) }
-    LaunchedEffect(cardNo.length) {
-        result.value = binMap.value[cardNo.take(6)]
+    var cardservice by remember { mutableStateOf("") }
+
+    val maxRetries = 3
+    var retryCount by remember { mutableStateOf(0) }
+
+    LaunchedEffect(cardNo) {
+        if (cardNo.length == 6) {
+            isLoading = true
+            retryCount = 0
+
+            suspend fun tryBinRequest() {
+                delay(500) // kullanıcı yazmayı bitirmiş olsun
+
+                RetrofitClient.binListApi.getBinInfo(cardNo).enqueue(object : Callback<BinInfo> {
+                    override fun onResponse(call: Call<BinInfo>, response: Response<BinInfo>) {
+                        if (response.isSuccessful) {
+                            binInfo = response.body()
+                            retryCount = 0
+                            isLoading = false
+                        } else {
+                            Log.e("BasketScreen", "API Error: ${response.code()} - ${response.message()}")
+                            if (response.code() == 429 && retryCount < maxRetries) {
+                                retryCount++
+                                Log.e("BasketScreen", "Rate limit reached. Retrying in 1 second ($retryCount/$maxRetries)")
+                                scope.launch {
+                                    delay(1000)
+                                    tryBinRequest()
+                                }
+                            } else {
+                                isLoading = false
+                                retryCount = 0
+                            }
+                        }
+                    }
+
+                    override fun onFailure(call: Call<BinInfo>, t: Throwable) {
+                        Log.e("BasketScreen", "Error response: ${t.message}")
+                        isLoading = false
+                        retryCount = 0
+                    }
+                })
+            }
+
+            tryBinRequest()
+        }
+    }
+
+
+    LaunchedEffect(binInfo) {
+        binInfo?.scheme.let {
+            cardservice = it.toString()
+        }
     }
     Surface(
         modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
@@ -97,10 +150,11 @@ fun BasketScreen(navController: NavHostController, totalPrice: String?, orderId:
                             }
 
                             TextField(value = cvv, onValueChange = {
-                                if(cvv.length < 3){
+                                if (it.length < 4 && it.all { char -> char.isDigit() }) {
                                     cvv = it
                                 }
                             }, placeholder = { Text("cvv") },
+
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 colors = TextFieldDefaults.colors(
                                     errorContainerColor = Color.Transparent,
@@ -177,38 +231,33 @@ fun BasketScreen(navController: NavHostController, totalPrice: String?, orderId:
                             )
 
                         )
-                        result.value = binMap.value[cardNo]
-                        var model = R.drawable.remove
-                        var cardservice = ""
 
-                        if (cardservice == "mastercard"){
-                                 model = R.drawable.mastercard
-                        }else if (cardservice == "visa"){
-                            model = R.drawable.visa
-                        }else if (cardservice == "troy"){
-                           model = R.drawable.troy
-                        }else{
-                            model = R.drawable.remove
+                        val model = when (cardservice.lowercase()) {
+                            "mastercard" -> R.drawable.mastercard
+                            "visa" -> R.drawable.visa
+                            else -> R.drawable.remove
                         }
-                        val painter = rememberAsyncImagePainter(model = model)
-                        Image(modifier = Modifier.size(50.dp), painter = painter, contentDescription = null)
+                        val painter = rememberAsyncImagePainter(model =model)
+                        if (isLoading){
+                            CircularProgressIndicator(modifier = Modifier.size(30.dp),color = Color.White)
+                        }else{
+                            Image(modifier = Modifier.size(50.dp).padding(end = 10.dp), painter = painter, contentDescription = null)
+                        }
                     }
                 }
             }
-            Column(Modifier.border(1.dp,Color.Yellow)) {
-                result.value.let {
-                    Column {
-                        Text(cardNo, color = Color.White)
-                        Text("Marka: ${it?.bin}",color = Color.White)
-                        Text("Tür: ${it?.bankCode}",color = Color.White)
-                        Text("Ülke: ${it?.bankName}",color = Color.White)
-                        Text("Bankanın Web Sitesi: ${it?.type ?: "Yok"}",color = Color.White)
-                        Text("Telefon: ${it?.subType ?: "Yok"}",color = Color.White)
-                    }
-
-                }
+            // Yükleniyor animasyonu
+            if (isLoading) {
+                CircularProgressIndicator()
             }
 
+            // Bin verisi geldiyse göster
+            binInfo?.let {
+                Text("Bank: ${it.bank.name}",color = Color.White)
+                Text("Brand: ${it.brand}",color = Color.White)
+                Text("Scheme: ${it.scheme}",color = Color.White)
+                Text("Type: ${it.type}",color = Color.White)
+            }?: Log.d("BasketScreen", "BinInfo is null")
         }
     }
     BackHandler(true) {
