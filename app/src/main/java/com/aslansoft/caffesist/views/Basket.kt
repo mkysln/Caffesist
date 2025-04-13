@@ -42,13 +42,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.aslansoft.caffesist.R
-import com.aslansoft.caffesist.classes.BinInfo
+import com.aslansoft.caffesist.classes.ApiResponse
 import com.aslansoft.caffesist.classes.CardField
 import com.aslansoft.caffesist.classes.RetrofitClient
 import com.aslansoft.caffesist.ui.theme.Pink40
 import com.aslansoft.caffesist.ui.theme.Pink80
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -58,12 +57,12 @@ fun BasketScreen(navController: NavHostController, totalPrice: String?, orderId:
     var cardNo by remember { mutableStateOf("") }
     var cardExp by remember { mutableStateOf(TextFieldValue()) }
     var cvv by remember { mutableStateOf("") }
-    var binInfo by remember { mutableStateOf<BinInfo?>(null) }
     var isLoading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    var cardservice by remember { mutableStateOf("") }
-
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    var cardScheme by remember { mutableStateOf<String?>(null) }
+    var bankName by remember { mutableStateOf<String?>(null) }
     val maxRetries = 3
     var retryCount by remember { mutableStateOf(0) }
 
@@ -75,32 +74,21 @@ fun BasketScreen(navController: NavHostController, totalPrice: String?, orderId:
             suspend fun tryBinRequest() {
                 delay(500) // kullanıcı yazmayı bitirmiş olsun
 
-                RetrofitClient.binListApi.getBinInfo(cardNo).enqueue(object : Callback<BinInfo> {
-                    override fun onResponse(call: Call<BinInfo>, response: Response<BinInfo>) {
+                RetrofitClient.binTableApi.getBinInfo(cardNo.take(6), "14dd1bd4fcc9a3fc8dd209999efbb1514db735c4").enqueue(object : Callback<ApiResponse> {
+                    override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
                         if (response.isSuccessful) {
-                            binInfo = response.body()
-                            retryCount = 0
                             isLoading = false
+                            cardScheme = response.body()?.data?.card?.scheme
+                            bankName = response.body()?.data?.bank?.name
+                            Log.d("BasketScreen", "Card Scheme: $cardScheme, Bank: $bankName")
                         } else {
-                            Log.e("BasketScreen", "API Error: ${response.code()} - ${response.message()}")
-                            if (response.code() == 429 && retryCount < maxRetries) {
-                                retryCount++
-                                Log.e("BasketScreen", "Rate limit reached. Retrying in 1 second ($retryCount/$maxRetries)")
-                                scope.launch {
-                                    delay(1000)
-                                    tryBinRequest()
-                                }
-                            } else {
-                                isLoading = false
-                                retryCount = 0
-                            }
+                            isLoading = false
+                            Log.e("BasketScreen", "API Hata: ${response.code()} - ${response.message()}")
                         }
                     }
 
-                    override fun onFailure(call: Call<BinInfo>, t: Throwable) {
-                        Log.e("BasketScreen", "Error response: ${t.message}")
-                        isLoading = false
-                        retryCount = 0
+                    override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
+                        Log.e("BasketScreen", "İstek başarısız: ${t.message}")
                     }
                 })
             }
@@ -110,11 +98,7 @@ fun BasketScreen(navController: NavHostController, totalPrice: String?, orderId:
     }
 
 
-    LaunchedEffect(binInfo) {
-        binInfo?.scheme.let {
-            cardservice = it.toString()
-        }
-    }
+
     Surface(
         modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
     ) {
@@ -149,7 +133,8 @@ fun BasketScreen(navController: NavHostController, totalPrice: String?, orderId:
                                 cardNo = it
                             }
 
-                            TextField(value = cvv, onValueChange = {
+                            TextField(
+                                value = cvv, onValueChange = {
                                 if (it.length < 4 && it.all { char -> char.isDigit() }) {
                                     cvv = it
                                 }
@@ -171,7 +156,8 @@ fun BasketScreen(navController: NavHostController, totalPrice: String?, orderId:
                                         backgroundColor = Pink40
                                     ),
                                     cursorColor = Color.White
-                                ))
+                                )
+                            )
                         }
 
                     }
@@ -232,16 +218,24 @@ fun BasketScreen(navController: NavHostController, totalPrice: String?, orderId:
 
                         )
 
-                        val model = when (cardservice.lowercase()) {
+                        val model = when (cardScheme?.lowercase()) {
                             "mastercard" -> R.drawable.mastercard
                             "visa" -> R.drawable.visa
+                            "troy" -> R.drawable.troy
                             else -> R.drawable.remove
                         }
-                        val painter = rememberAsyncImagePainter(model =model)
-                        if (isLoading){
-                            CircularProgressIndicator(modifier = Modifier.size(30.dp),color = Color.White)
-                        }else{
-                            Image(modifier = Modifier.size(50.dp).padding(end = 10.dp), painter = painter, contentDescription = null)
+                        val painter = rememberAsyncImagePainter(model = model)
+                        if (isLoading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(30.dp),
+                                color = Color.White
+                            )
+                        } else {
+                            Image(
+                                modifier = Modifier.size(50.dp).padding(end = 10.dp),
+                                painter = painter,
+                                contentDescription = null
+                            )
                         }
                     }
                 }
@@ -249,18 +243,26 @@ fun BasketScreen(navController: NavHostController, totalPrice: String?, orderId:
             // Yükleniyor animasyonu
             if (isLoading) {
                 CircularProgressIndicator()
+            }else{
+                // Bin verisi geldiyse göster
+                errorMessage.let { msg ->
+                    Text(text = "error:"+msg.toString(),color = Color.White)
+
+                }
+                cardScheme.let {
+                    Text(text = it.toString(), color = Color.White)
+                }
+                bankName.let {
+                    Text(text = it.toString(), color = Color.White)
+                }
             }
 
-            // Bin verisi geldiyse göster
-            binInfo?.let {
-                Text("Bank: ${it.bank.name}",color = Color.White)
-                Text("Brand: ${it.brand}",color = Color.White)
-                Text("Scheme: ${it.scheme}",color = Color.White)
-                Text("Type: ${it.type}",color = Color.White)
-            }?: Log.d("BasketScreen", "BinInfo is null")
+
+
+
         }
-    }
-    BackHandler(true) {
-        navController.popBackStack()
+        BackHandler(true) {
+            navController.popBackStack()
+        }
     }
 }
