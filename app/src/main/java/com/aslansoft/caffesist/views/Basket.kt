@@ -58,18 +58,14 @@ fun BasketScreen(navController: NavHostController, totalPrice: String?, orderId:
     var cardExp by remember { mutableStateOf(TextFieldValue()) }
     var cvv by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
-    val context = LocalContext.current
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var cardScheme by remember { mutableStateOf<String?>(null) }
     var bankName by remember { mutableStateOf<String?>(null) }
-    val maxRetries = 3
-    var retryCount by remember { mutableStateOf(0) }
 
     LaunchedEffect(cardNo) {
         if (cardNo.length == 6) {
             isLoading = true
-            retryCount = 0
+
 
             suspend fun tryBinRequest() {
                 delay(500) // kullanıcı yazmayı bitirmiş olsun
