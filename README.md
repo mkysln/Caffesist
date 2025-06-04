@@ -2,4 +2,4 @@
 
 ---
 
-## Created by ASLAN SOFTWARE STUDIO(Mümin KAYAASLAN)
+## Created by Mümin KAYAASLAN
